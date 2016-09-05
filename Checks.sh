@@ -26,7 +26,7 @@ Step 1 Adaptor library
 
 
 Step 2 DIAMOND blastx ...
-diamond blastx -d $DIAMOND_DB/nr -p 8 -q $contig -a ${contig}_diamond -t ${stub}_temp_dir --top 1
+/home3/Davison/bin/diamond blastx -d $DIAMOND_DB/nr -p 8 -q $contig -a ${contig}_diamond -t ${stub}_temp_dir --top 1
 
 Step 3 BLAST against nt ...
 
