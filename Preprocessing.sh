@@ -19,4 +19,4 @@ bowtie2-build $contig $stub
 bowtie2 -x $stub -1 $read1 -2 $read2 -S ${stub}_bowtie2.sam
 samtools view -bS ${stub}_bowtie2.sam | samtools sort -o ${stub}_bowtie2.bam
 samtools index ${stub}_bowtie2.bam
-weeSAMv1.1 -b ${stub}_bowtie2.bam -out $stub
+./ContigStats.pl -b ${stub}_bowtie2.bam -contig $contig -out ${stub}.txt
