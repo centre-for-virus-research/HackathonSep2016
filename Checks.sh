@@ -4,6 +4,11 @@
 # 3) 50% similarity for nucleotide
 # 4) low complexity (DUST, entropy)
 
+
+#Convert the blast db to fastas
+
+# fastacmd -d refseq_protein -p T -a T -D 1 -o allprots.faa
+
 usage=`echo -e "\n Usage: Checks.sh ContigFile.fa Outprefix\n"`;
 
 if [[ ! $1 ]]
