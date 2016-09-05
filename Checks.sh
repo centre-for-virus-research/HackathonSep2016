@@ -7,7 +7,8 @@
 
 #Convert the blast db to fastas
 
-# fastacmd -d refseq_protein -p T -a T -D 1 -o allprots.faa
+# fastacmd -d nr -p T -a T -D 1 -o nr.faa
+# blastdbcmd -db nr -dbtype prot -get_dups -outfmt %f -out nr_blastdbcmd.faa
 
 usage=`echo -e "\n Usage: Checks.sh ContigFile.fa Outprefix\n"`;
 
@@ -26,3 +27,6 @@ Step 1 Adaptor library
 
 Step 2 DIAMOND blastx ...
 diamond blastx -d $DIAMOND_DB/nr -p 8 -q $contig -a ${contig}_diamond -t ${stub}_temp_dir --top 1
+
+Step 3 BLAST against nt ...
+
