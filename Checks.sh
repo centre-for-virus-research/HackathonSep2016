@@ -4,7 +4,7 @@
 # 3) 50% similarity for nucleotide
 # 4) low complexity (DUST, entropy)
 
-usage=`echo -e "\n Usage: Checks.sh file_R1.fastq file_R2.fastq ContigFile.fa Outprefix\n"`;
+usage=`echo -e "\n Usage: Checks.sh ContigFile.fa Outprefix\n"`;
 
 if [[ ! $1 ]]
 then
@@ -12,11 +12,12 @@ then
 exit;
 fi
 
-read1=$1
-read2=$2
-echo "Checking files" $read1 $read2
-contig=$3
-stub=$4
+contig=$1
+stub=$2
+
+Step 1 Adaptor library
+
+
 
 Step 2 DIAMOND blastx ...
 diamond blastx -d $DIAMOND_DB/nr -p 8 -q $contig -a ${contig}_diamond -t ${stub}_temp_dir --top 1
