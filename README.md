@@ -38,13 +38,21 @@ e.g.:
 ```
 perl profileComplexSeq1.pl <filename.fa>
 ```
-The output is filename.complex where columns are tab delimited in the order of 
-seq is the header of the contigs/sequence
-gc is the complexity of GC content of the sequence
-gcs is the complexity of GC-skew of the sequence
-cpg is the complexity of CpG island content of the sequence
-cwf is the complexity of Woottoon and Federhen value
-ce is the complexity of Shannon Entropy
-cz is the complexity of compression factor using Gzip
+The output is filename.complex where columns are tab delimited in the order of;
+
+ 
+seq is the header of the contigs/sequence;
+
+gc is the complexity of GC content of the sequence;
+
+gcs is the complexity of GC-skew of the sequence;
+
+cpg is the complexity of CpG island content of the sequence;
+
+cwf is the complexity of Woottoon and Federhen value;
+
+ce is the complexity of Shannon Entropy;
+
+cz is the complexity of compression factor using Gzip;
 
 
