@@ -55,8 +55,15 @@ ce is the complexity of Shannon Entropy;
 
 cz is the complexity of compression factor using Gzip;
 
-**RandomDark.jar** Java program to randomly generate paired end DNA sequences in FASTQ format. User supplies the read length and number of reads to output. The default behaviour is to use equal probabilities (25%) for the ACGT bases and 0 probability for N bases, but the user can override these. An output stub filename needs to be provided, and stub_1.fastq and stub_2.fastq files will be written.
-e.g.:
+**RandomDark.jar** Java program to randomly generate paired end DNA sequences in FASTQ format. User supplies the read length and number of reads to output. The default behaviour is to use equal probabilities (25%) for the ACGT bases and 0 probability for N bases, but the user can override these. An output stub filename needs to be provided, and stub_1.fastq and stub_2.fastq files will be written. The source code is in RandomDark.java
 ```
 java -jar RandomDark.jar NumberOfReads[int] ReadLength[int] OutputFilenameStub[string]
 java -jar RandomDark.jar NumberOfReads[int] ReadLength[int] OutputFilenameStub[string] Aprob[double] Cprob[double] Gprob[double] Tprob[double] Nprob[double]
+```
+
+**RandomVirus.jar** Java program to generate paired end DNA sequences in FASTQ format, randomly generated from a given sequence file containing host and/or viral genome(s). The input sequence file must be in FASTA single sequence line format. User supplies the read length and number of reads to output. Reads can be generated from the input sequences with equal probability (each input sequence has equal weight: eqProb=Y) or by scaling the probability to reflect sequence length (eqProb=N). An output stub filename needs to be provided, and stub_1.fastq and stub_2.fastq files will be written. The source code is in RandomVirus.java
+```
+java -jar RandomVirus.jar InputSequenFileName[string] NumberOfReads[int] ReadLength[int] EqualProbability[y/n] OutputFilenameStub[string]
+
+```
+
