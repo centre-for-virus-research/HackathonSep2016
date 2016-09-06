@@ -108,35 +108,35 @@ print OUT "\n";
 foreach my $contigname (keys %info){
   print OUT $contigname;
   for ($i=1; $i<scalar(@m8_header);$i++){
-    if ($info{$contigname}{"adaptor_$m8_header[$i]"}){
+    if (exists $info{$contigname}{"adaptor_$m8_header[$i]"}){
       print OUT "\t",$info{$contigname}{"adaptor_$m8_header[$i]"};
     }else{
       print OUT "\tNULL";
     }
   }
   for ($i=1; $i<scalar(@m8_header);$i++){
-    if ($info{$contigname}{"diamond_$m8_header[$i]"}){
+    if (exists $info{$contigname}{"diamond_$m8_header[$i]"}){
       print OUT "\t",$info{$contigname}{"diamond_$m8_header[$i]"};
     }else{
       print OUT "\tNULL";
     }
   }
   for ($i=1; $i<scalar(@m8_header);$i++){
-    if ($info{$contigname}{"blast_$m8_header[$i]"}){
+    if (exists $info{$contigname}{"blast_$m8_header[$i]"}){
       print OUT "\t",$info{$contigname}{"blast_$m8_header[$i]"};
     }else{
       print OUT "\tNULL";
     }
   }
   for ($i=1; $i<scalar(@entropy_header);$i++){
-    if ($info{$contigname}{"$entropy_header[$i]"}){
+    if (exists $info{$contigname}{"$entropy_header[$i]"}){
       print OUT "\t",$info{$contigname}{"$entropy_header[$i]"};
     }else{
       print OUT "\tNULL";
     }
   }
   for ($i=1; $i<scalar(@mapped_header);$i++){
-    if ($info{$contigname}{"$mapped_header[$i]"}){
+    if (exists $info{$contigname}{"$mapped_header[$i]"}){
       print OUT "\t",$info{$contigname}{"$mapped_header[$i]"};
     }else{
       print OUT "\tNULL";
