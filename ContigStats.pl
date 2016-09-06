@@ -116,7 +116,7 @@ sub makeSumStats{
          #print NOMAPPED "$id\t".$info{$id}{"reflength"}."\t";
          #print NOMAPPED "NA\tNA\tNA\tNA\tNA\n";
          print OUT "$id\t".$info{$id}{"reflength"}."\t";
-         print OUT "NA\tNA\tNA\tNA\tNA\n";
+         print OUT "NULL\tNULL\tNULL\tNULL\tNULL\n";
 
        }
      }
