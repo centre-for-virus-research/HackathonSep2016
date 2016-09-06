@@ -55,4 +55,8 @@ ce is the complexity of Shannon Entropy;
 
 cz is the complexity of compression factor using Gzip;
 
-
+**RandomDark.jar** Java program to randomly generate paired end DNA sequences in FASTQ format. User supplies the read length and number of reads to output. The default behaviour is to use equal probabilities (25%) for the ACGT bases and 0 probability for N bases, but the user can override these. An output stub filename needs to be provided, and stub_1.fastq and stub_2.fastq files will be written.
+e.g.:
+```
+java -jar RandomDark.jar NumberOfReads[int] ReadLength[int] OutputFilenameStub[string]
+java -jar RandomDark.jar NumberOfReads[int] ReadLength[int] OutputFilenameStub[string] Aprob[double] Cprob[double] Gprob[double] Tprob[double] Nprob[double]
