@@ -7,15 +7,18 @@
 
 use Getopt::Long; 
 use strict;
+use Bio::SeqIO;
+
 
 # declaring global variables
-my ($adaptor,$diamond,$blast,$entropy,$mapped,$help,%info,$out);
+my ($adaptor,$diamond,$blast,$entropy,$mapped,$contig,$help,%info,$out);
 &GetOptions(
 	    '-adaptor:s'  => \$adaptor,#
 	    '-diamond:s' => \$diamond, #
 	    '-blast:s'  => \$blast,# 
 	    '-entropy:s'  => \$entropy,# 
 	    '-mapped:s'  => \$mapped,# 
+	    '-contig:s'  => \$contig,
 	    "h|help|?"  => \$help,#the help
 	    '-out=s'  => \$out,#file with coverage of for the file
            );
@@ -27,10 +30,21 @@ print "    -diamond <txt>    - the diamond protein match file (m8  format)\n";
 print "    -blast <txt>    - the blastn output (m8  format)\n";
 print "    -entropy <txt> - the entropy and GC metrics (text-tab with header)\n";
 print "    -mapped <txt> - the file with number of mapped reads, coverage (text-tab with header)\n";
+print "    -contig <txt> - the file with all the contigs\n";
 print "    -out <txt> - the output prefix  name\n";
 print "    -help|h|?  - Get this help\n";
 exit();
  }
+
+
+my $inseq = Bio::SeqIO->new(-file   => "$contig",
+                            -format => "fasta", );
+my $cnt=0;
+while (my $seq = $inseq->next_seq) {
+    $info{$seq->id}{"sequence"}=$seq->seq;
+    $cnt++;
+}
+
 
 my $i;
 my @m8_header=qw/queryId subjectId percIdentity alnLength mismatchCount gapOpenCount queryStart queryEnd subjectStart subjectEnd eVal bitScore/;
@@ -98,6 +112,7 @@ while(<MAPPED>){
 
 open(OUT,">$out")||die "Can't open $out\n";
 print OUT "ContigID\t";
+print OUT "Sequence\t";
 print OUT "adaptor_",join("\tadaptor_",@m8_header[1 .. $#m8_header]);
 print OUT "\tdiamond_",join("\tdiamond_",@m8_header[1 .. $#m8_header]);
 print OUT "\tblast_",join("\tblast_",@m8_header[1 .. $#m8_header]);
@@ -107,6 +122,7 @@ print OUT "\n";
 
 foreach my $contigname (keys %info){
   print OUT $contigname;
+  print OUT "\t",$info{$contigname}{"sequence"};
   for ($i=1; $i<scalar(@m8_header);$i++){
     if (exists $info{$contigname}{"adaptor_$m8_header[$i]"}){
       print OUT "\t",$info{$contigname}{"adaptor_$m8_header[$i]"};
