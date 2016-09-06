@@ -24,7 +24,7 @@ my ($bamfile,$out,$help,%info,$totalunmapped,$totalmapped,%depth,$contigfile);
 if (($help)||(!$bamfile&&!$contigfile)){
 print "   Usage : ContigStats.pl <list of arguments>\n";
 print "    -b <txt>   - the input BAM file\n";
-print "   -b <txt>    - the input contig file\n";
+print "    -contig <txt>    - the input contig file\n";
 print "    -c <int>   - cut-off value for number of mapped reads [default = 0]\n";
 print "   -out <txt> - the output file name\n";
 print "    -help|h|?  - Get this help\n";
@@ -50,8 +50,8 @@ sub makeSumStats{
     $info{$seq->id}{"reflength"}=$seq->length;
     $cnt++;
   }
-
-  open(OUT,">$out")||die "Can't open output\n";
+  #open(NOMAPPED,">$out\_none_mapped.txt")||die "Can't open $out\_none_mapped.txt\n";
+  open(OUT,">$out\.txt")||die "Can't open output\n";
   system("samtools idxstats $bam > tmp_mapped.txt");
   open(MAPPED,"<tmp_mapped.txt")||die "Can't open tmp_mapped.txt\n";
   while(<MAPPED>){
@@ -100,10 +100,12 @@ sub makeSumStats{
   system("rm tmp_depth.txt");
   my $wocnt=0;
   print OUT "ReferenceID\tRefLength\tMappedReads\tBreadth\tPercentCovered\tMinDepth\tMaxDepth\tAverageDepth\n";
+  #print NOMAPPED "ReferenceID\tRefLength\tMappedReads\tBreadth\tPercentCovered\tMinDepth\tMaxDepth\tAverageDepth\n";
   for my $id (keys %info){
     if ($info{$id}{"reflength"}){
-      print OUT "$id\t".$info{$id}{"reflength"}."\t";
+      
       if ($info{$id}{"mapped"}){
+        print OUT "$id\t".$info{$id}{"reflength"}."\t";
         print OUT $info{$id}{"mapped"}."\t";
         print OUT $info{$id}{"breadth"}."\t";
         print OUT $info{$id}{"breadth"}*100/$info{$id}{"reflength"}."\t";
@@ -111,7 +113,11 @@ sub makeSumStats{
         print OUT $info{$id}{"sumdepth"}/$info{$id}{"breadth"}."\n";
        }else{ 
          $wocnt++;
+         #print NOMAPPED "$id\t".$info{$id}{"reflength"}."\t";
+         #print NOMAPPED "NA\tNA\tNA\tNA\tNA\n";
+         print OUT "$id\t".$info{$id}{"reflength"}."\t";
          print OUT "NA\tNA\tNA\tNA\tNA\n";
+
        }
      }
   }
