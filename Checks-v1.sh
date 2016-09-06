@@ -10,7 +10,7 @@
 # fastacmd -d nr -p T -a T -D 1 -o nr.faa
 # blastdbcmd -db nr -dbtype prot -get_dups -outfmt %f -out nr_blastdbcmd.faa
 
-usage=`echo -e "\n Usage: Checks.sh ContigFile.fa Outprefix\n"`;
+usage=`echo -e "\n Usage: Checks-v1.sh ContigFile.fa Outprefix\n"`;
 
 if [[ ! $1 ]]
 then

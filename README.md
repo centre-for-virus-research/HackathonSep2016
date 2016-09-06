@@ -20,10 +20,10 @@ e.g.:
 ```
 Preprocessing.sh file_R1.fastq file_R2.fastq contig.fa Outprefix
 ```
-**Checks.sh**: bash script to check for sequencing adapters and carry out classification of the reads using DIAMOND and BLASTN 
+**Checks-v1.sh**: bash script to check for sequencing adapters and carry out classification of the reads using DIAMOND and BLASTN 
 e.g.:
 ```
-Checks.sh ContigFile.fa Outprefix
+Checks-v1.sh ContigFile.fa Outprefix
 ```
 
 **JoinTables.pl**: perl script to join the mapped read table, entropy/GC table, 
