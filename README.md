@@ -1,15 +1,31 @@
 # Hackathon using September 2016
 
 ## Datasets
-*Zika sample*: sequenced with Nextseq and Miseq. Contigs generated using IDBA and spades and 
+**Zika sample**: sequenced with Nextseq and Miseq. Contigs generated using IDBA and spades and 
 consolodiated using GARM. 
 
 
 
 ## Scripts
-*ContigStats.pl*: perl script to process a bam file, provides sttistics about number 
+**ContigStats.pl**: perl script to process a bam file, provides sttistics about number 
 of reads mapping, coverage of contig, depth etc...
+e.g.: 
+```
+./ContigStats.pl -b input_bowtie2.bam -contig contig.fa -out stats.txt
+```
 
-*Preprocessing.sh*: bash script to carry out bowtie2 mapping of reads of contigs and 
+**Preprocessing.sh**: bash script to carry out bowtie2 mapping of reads of contigs and 
 preprocessing stats
+e.g.:
+```
+Preprocessing.sh file_R1.fastq file_R2.fastq contig.fa Outprefix
+```
+
+**JoinTables.pl**: perl script to join the mapped read table, entropy/GC table, 
+diamond table, blast table, adaptor match table
+e.g.:
+```
+perl JoinTables.pl -adaptor checks_adapters_out -diamond checks_diamond.m8 -blast checks_blastn.m8 -entropy contigs.complex -mapped mapping.txt -out output.txt
+```
+
 
