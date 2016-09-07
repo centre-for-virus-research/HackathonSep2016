@@ -19,7 +19,7 @@ import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 @ApplicationPath("/")
 public class Hackathon2016Application extends ResourceConfig implements ServletContextListener {
 
-	private static Logger logger = Logger.getLogger("uk.ac.gla.cvr.hackathon2016");
+	public static Logger logger = Logger.getLogger("uk.ac.gla.cvr.hackathon2016");
 	
 	public Hackathon2016Application() {
 		super();

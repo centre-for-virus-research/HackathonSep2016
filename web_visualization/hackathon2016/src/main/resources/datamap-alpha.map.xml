@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/3.0/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/3.0/modelMap http://cayenne.apache.org/schema/3.0/modelMap.xsd"
+	 project-version="6">
+	<property name="defaultPackage" value="uk.ac.gla.cvr.hackathon2016.data"/>
+	<db-entity name="Analysis" catalog="Hack">
+		<db-attribute name="analysisDate" type="DATE" length="10"/>
+		<db-attribute name="denovoOptions" type="VARCHAR" length="100"/>
+		<db-attribute name="denovoProgram" type="VARCHAR" length="100"/>
+		<db-attribute name="knownGenomesInTheSample" type="VARCHAR" length="100"/>
+		<db-attribute name="notes" type="LONGVARCHAR" length="65535"/>
+		<db-attribute name="nrVersion" type="VARCHAR" length="50"/>
+		<db-attribute name="ntVersion" type="VARCHAR" length="100"/>
+		<db-attribute name="progAndOptionsforNrSearch" type="VARCHAR" length="100"/>
+		<db-attribute name="progAndOptionsforNtSearch" type="VARCHAR" length="100"/>
+		<db-attribute name="researcher" type="VARCHAR" length="100"/>
+		<db-attribute name="seqID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
+	</db-entity>
+	<db-entity name="MergeTable" catalog="Hack">
+		<db-attribute name="AverageDepth" type="REAL" length="12"/>
+		<db-attribute name="Breadth" type="INTEGER" length="10"/>
+		<db-attribute name="ContigID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
+		<db-attribute name="MappedReads" type="INTEGER" length="10"/>
+		<db-attribute name="MaxDepth" type="INTEGER" length="10"/>
+		<db-attribute name="MinDepth" type="INTEGER" length="10"/>
+		<db-attribute name="PercentCovered" type="REAL" length="12"/>
+		<db-attribute name="RefLength" type="INTEGER" length="10"/>
+		<db-attribute name="Seq" type="LONGVARCHAR" length="65535"/>
+		<db-attribute name="SeqID" type="VARCHAR" length="100"/>
+		<db-attribute name="adaptor_alnLength" type="INTEGER" length="10"/>
+		<db-attribute name="adaptor_bitScore" type="REAL" length="12"/>
+		<db-attribute name="adaptor_eVal" type="REAL" length="12"/>
+		<db-attribute name="adaptor_gapOpenCount" type="INTEGER" length="10"/>
+		<db-attribute name="adaptor_mismatchCount" type="INTEGER" length="10"/>
+		<db-attribute name="adaptor_percIdentity" type="REAL" length="12"/>
+		<db-attribute name="adaptor_queryEnd" type="INTEGER" length="10"/>
+		<db-attribute name="adaptor_queryStart" type="INTEGER" length="10"/>
+		<db-attribute name="adaptor_subjectEnd" type="INTEGER" length="10"/>
+		<db-attribute name="adaptor_subjectId" type="VARCHAR" length="100"/>
+		<db-attribute name="adaptor_subjectStart" type="INTEGER" length="10"/>
+		<db-attribute name="blast_alnLength" type="INTEGER" length="10"/>
+		<db-attribute name="blast_bitScore" type="REAL" length="12"/>
+		<db-attribute name="blast_eVal" type="REAL" length="12"/>
+		<db-attribute name="blast_gapOpenCount" type="INTEGER" length="10"/>
+		<db-attribute name="blast_mismatchCount" type="INTEGER" length="10"/>
+		<db-attribute name="blast_percIdentity" type="REAL" length="12"/>
+		<db-attribute name="blast_queryEnd" type="INTEGER" length="10"/>
+		<db-attribute name="blast_queryStart" type="INTEGER" length="10"/>
+		<db-attribute name="blast_subjectEnd" type="INTEGER" length="10"/>
+		<db-attribute name="blast_subjectId" type="VARCHAR" length="100"/>
+		<db-attribute name="blast_subjectStart" type="INTEGER" length="10"/>
+		<db-attribute name="ce" type="REAL" length="12"/>
+		<db-attribute name="cpg" type="REAL" length="12"/>
+		<db-attribute name="cwf" type="REAL" length="12"/>
+		<db-attribute name="cz" type="REAL" length="12"/>
+		<db-attribute name="diamond_alnLength" type="INTEGER" length="10"/>
+		<db-attribute name="diamond_bitScore" type="REAL" length="12"/>
+		<db-attribute name="diamond_eVal" type="REAL" length="12"/>
+		<db-attribute name="diamond_gapOpenCoun" type="INTEGER" length="10"/>
+		<db-attribute name="diamond_mismatchCount" type="INTEGER" length="10"/>
+		<db-attribute name="diamond_percIdentity" type="REAL" length="12"/>
+		<db-attribute name="diamond_queryEnd" type="INTEGER" length="10"/>
+		<db-attribute name="diamond_queryStart" type="INTEGER" length="10"/>
+		<db-attribute name="diamond_subjectEnd" type="INTEGER" length="10"/>
+		<db-attribute name="diamond_subjectId" type="VARCHAR" length="100"/>
+		<db-attribute name="diamond_subjectStart" type="INTEGER" length="10"/>
+		<db-attribute name="gc" type="REAL" length="12"/>
+		<db-attribute name="gcs" type="REAL" length="12"/>
+	</db-entity>
+	<db-entity name="Sample" catalog="Hack">
+		<db-attribute name="collectionDate" type="DATE" length="10"/>
+		<db-attribute name="host" type="VARCHAR" length="100"/>
+		<db-attribute name="metagenomics" type="TINYINT" length="3"/>
+		<db-attribute name="owner" type="VARCHAR" length="100"/>
+		<db-attribute name="smpID" type="INTEGER" isPrimaryKey="true" isMandatory="true" length="10"/>
+		<db-attribute name="source" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="Sequence" catalog="Hack">
+		<db-attribute name="libPrep" type="LONGVARCHAR" length="65535"/>
+		<db-attribute name="seqID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
+		<db-attribute name="seqType" type="TINYINT" length="3"/>
+		<db-attribute name="smpID" type="INTEGER" length="10"/>
+		<db-attribute name="technology" type="VARCHAR" length="100"/>
+	</db-entity>
+	<obj-entity name="Analysis" className="uk.ac.gla.cvr.hackathon2016.data.Analysis" dbEntityName="Analysis">
+		<obj-attribute name="analysisDate" type="java.util.Date" db-attribute-path="analysisDate"/>
+		<obj-attribute name="denovoOptions" type="java.lang.String" db-attribute-path="denovoOptions"/>
+		<obj-attribute name="denovoProgram" type="java.lang.String" db-attribute-path="denovoProgram"/>
+		<obj-attribute name="knownGenomesInTheSample" type="java.lang.String" db-attribute-path="knownGenomesInTheSample"/>
+		<obj-attribute name="notes" type="java.lang.String" db-attribute-path="notes"/>
+		<obj-attribute name="nrVersion" type="java.lang.String" db-attribute-path="nrVersion"/>
+		<obj-attribute name="ntVersion" type="java.lang.String" db-attribute-path="ntVersion"/>
+		<obj-attribute name="progAndOptionsforNrSearch" type="java.lang.String" db-attribute-path="progAndOptionsforNrSearch"/>
+		<obj-attribute name="progAndOptionsforNtSearch" type="java.lang.String" db-attribute-path="progAndOptionsforNtSearch"/>
+		<obj-attribute name="researcher" type="java.lang.String" db-attribute-path="researcher"/>
+		<obj-attribute name="seqID" type="java.lang.String" db-attribute-path="seqID"/>
+	</obj-entity>
+	<obj-entity name="MergeTable" className="uk.ac.gla.cvr.hackathon2016.data.MergeTable" dbEntityName="MergeTable">
+		<obj-attribute name="adaptorAlnLength" type="java.lang.Integer" db-attribute-path="adaptor_alnLength"/>
+		<obj-attribute name="adaptorBitScore" type="java.lang.Float" db-attribute-path="adaptor_bitScore"/>
+		<obj-attribute name="adaptorEVal" type="java.lang.Float" db-attribute-path="adaptor_eVal"/>
+		<obj-attribute name="adaptorGapOpenCount" type="java.lang.Integer" db-attribute-path="adaptor_gapOpenCount"/>
+		<obj-attribute name="adaptorMismatchCount" type="java.lang.Integer" db-attribute-path="adaptor_mismatchCount"/>
+		<obj-attribute name="adaptorPercIdentity" type="java.lang.Float" db-attribute-path="adaptor_percIdentity"/>
+		<obj-attribute name="adaptorQueryEnd" type="java.lang.Integer" db-attribute-path="adaptor_queryEnd"/>
+		<obj-attribute name="adaptorQueryStart" type="java.lang.Integer" db-attribute-path="adaptor_queryStart"/>
+		<obj-attribute name="adaptorSubjectEnd" type="java.lang.Integer" db-attribute-path="adaptor_subjectEnd"/>
+		<obj-attribute name="adaptorSubjectId" type="java.lang.String" db-attribute-path="adaptor_subjectId"/>
+		<obj-attribute name="adaptorSubjectStart" type="java.lang.Integer" db-attribute-path="adaptor_subjectStart"/>
+		<obj-attribute name="averageDepth" type="java.lang.Float" db-attribute-path="AverageDepth"/>
+		<obj-attribute name="blastAlnLength" type="java.lang.Integer" db-attribute-path="blast_alnLength"/>
+		<obj-attribute name="blastBitScore" type="java.lang.Float" db-attribute-path="blast_bitScore"/>
+		<obj-attribute name="blastEVal" type="java.lang.Float" db-attribute-path="blast_eVal"/>
+		<obj-attribute name="blastGapOpenCount" type="java.lang.Integer" db-attribute-path="blast_gapOpenCount"/>
+		<obj-attribute name="blastMismatchCount" type="java.lang.Integer" db-attribute-path="blast_mismatchCount"/>
+		<obj-attribute name="blastPercIdentity" type="java.lang.Float" db-attribute-path="blast_percIdentity"/>
+		<obj-attribute name="blastQueryEnd" type="java.lang.Integer" db-attribute-path="blast_queryEnd"/>
+		<obj-attribute name="blastQueryStart" type="java.lang.Integer" db-attribute-path="blast_queryStart"/>
+		<obj-attribute name="blastSubjectEnd" type="java.lang.Integer" db-attribute-path="blast_subjectEnd"/>
+		<obj-attribute name="blastSubjectId" type="java.lang.String" db-attribute-path="blast_subjectId"/>
+		<obj-attribute name="blastSubjectStart" type="java.lang.Integer" db-attribute-path="blast_subjectStart"/>
+		<obj-attribute name="breadth" type="java.lang.Integer" db-attribute-path="Breadth"/>
+		<obj-attribute name="ce" type="java.lang.Float" db-attribute-path="ce"/>
+		<obj-attribute name="contigID" type="java.lang.String" db-attribute-path="ContigID"/>
+		<obj-attribute name="cpg" type="java.lang.Float" db-attribute-path="cpg"/>
+		<obj-attribute name="cwf" type="java.lang.Float" db-attribute-path="cwf"/>
+		<obj-attribute name="cz" type="java.lang.Float" db-attribute-path="cz"/>
+		<obj-attribute name="diamondAlnLength" type="java.lang.Integer" db-attribute-path="diamond_alnLength"/>
+		<obj-attribute name="diamondBitScore" type="java.lang.Float" db-attribute-path="diamond_bitScore"/>
+		<obj-attribute name="diamondEVal" type="java.lang.Float" db-attribute-path="diamond_eVal"/>
+		<obj-attribute name="diamondGapOpenCoun" type="java.lang.Integer" db-attribute-path="diamond_gapOpenCoun"/>
+		<obj-attribute name="diamondMismatchCount" type="java.lang.Integer" db-attribute-path="diamond_mismatchCount"/>
+		<obj-attribute name="diamondPercIdentity" type="java.lang.Float" db-attribute-path="diamond_percIdentity"/>
+		<obj-attribute name="diamondQueryEnd" type="java.lang.Integer" db-attribute-path="diamond_queryEnd"/>
+		<obj-attribute name="diamondQueryStart" type="java.lang.Integer" db-attribute-path="diamond_queryStart"/>
+		<obj-attribute name="diamondSubjectEnd" type="java.lang.Integer" db-attribute-path="diamond_subjectEnd"/>
+		<obj-attribute name="diamondSubjectId" type="java.lang.String" db-attribute-path="diamond_subjectId"/>
+		<obj-attribute name="diamondSubjectStart" type="java.lang.Integer" db-attribute-path="diamond_subjectStart"/>
+		<obj-attribute name="gc" type="java.lang.Float" db-attribute-path="gc"/>
+		<obj-attribute name="gcs" type="java.lang.Float" db-attribute-path="gcs"/>
+		<obj-attribute name="mappedReads" type="java.lang.Integer" db-attribute-path="MappedReads"/>
+		<obj-attribute name="maxDepth" type="java.lang.Integer" db-attribute-path="MaxDepth"/>
+		<obj-attribute name="minDepth" type="java.lang.Integer" db-attribute-path="MinDepth"/>
+		<obj-attribute name="percentCovered" type="java.lang.Float" db-attribute-path="PercentCovered"/>
+		<obj-attribute name="refLength" type="java.lang.Integer" db-attribute-path="RefLength"/>
+		<obj-attribute name="seq" type="java.lang.String" db-attribute-path="Seq"/>
+		<obj-attribute name="seqID" type="java.lang.String" db-attribute-path="SeqID"/>
+	</obj-entity>
+	<obj-entity name="Sample" className="uk.ac.gla.cvr.hackathon2016.data.Sample" dbEntityName="Sample">
+		<obj-attribute name="collectionDate" type="java.util.Date" db-attribute-path="collectionDate"/>
+		<obj-attribute name="host" type="java.lang.String" db-attribute-path="host"/>
+		<obj-attribute name="metagenomics" type="java.lang.Short" db-attribute-path="metagenomics"/>
+		<obj-attribute name="owner" type="java.lang.String" db-attribute-path="owner"/>
+		<obj-attribute name="smpID" type="java.lang.Integer" db-attribute-path="smpID"/>
+		<obj-attribute name="source" type="java.lang.String" db-attribute-path="source"/>
+	</obj-entity>
+	<obj-entity name="Sequence" className="uk.ac.gla.cvr.hackathon2016.data.Sequence" dbEntityName="Sequence">
+		<obj-attribute name="libPrep" type="java.lang.String" db-attribute-path="libPrep"/>
+		<obj-attribute name="seqID" type="java.lang.String" db-attribute-path="seqID"/>
+		<obj-attribute name="seqType" type="java.lang.Short" db-attribute-path="seqType"/>
+		<obj-attribute name="smpID" type="java.lang.Integer" db-attribute-path="smpID"/>
+		<obj-attribute name="technology" type="java.lang.String" db-attribute-path="technology"/>
+	</obj-entity>
+</data-map>

@@ -1,7 +1,16 @@
 package uk.ac.gla.cvr.hackathon2016;
 
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonNumber;
+import javax.json.JsonObject;
+import javax.json.JsonString;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -9,20 +18,160 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.exp.Expression;
+import org.apache.cayenne.exp.ExpressionFactory;
+import org.apache.cayenne.query.SelectQuery;
+
+import uk.ac.gla.cvr.hackathon2016.data.MergeTable;
+import uk.ac.gla.cvr.hackathon2016.data.Sample;
+import uk.ac.gla.cvr.hackathon2016.data.Sequence;
+import uk.ac.gla.cvr.hackathon2016.document.JsonUtils;
+
 public class Hackathon2016Controller {
 
+	public static Logger logger = Logger.getLogger("uk.ac.gla.cvr.hackathon2016");
+	
 	public Hackathon2016Controller() {
 	}
+
+	@SuppressWarnings("unchecked")
+	@GET()
+	@Path("/sequenceMetrics")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSequenceMetrics(@Context HttpServletResponse response) {
+		JsonArrayBuilder jsonArrayBuilder = JsonUtils.jsonArrayBuilder();
+		for(SequenceMetric sequenceMetric: SequenceMetric.values()) {
+			jsonArrayBuilder.add(JsonUtils.jsonObjectBuilder()
+					.add("property", sequenceMetric.getMergeTableProperty())
+					.add("description", sequenceMetric.getDescription()));
+		}
+		JsonObject resultObject = JsonUtils.jsonObjectBuilder()
+				.add("sequenceMetrics", jsonArrayBuilder.build())
+				.build();
+		return JsonUtils.prettyPrint(resultObject);
+	}
 	
+	@SuppressWarnings("unchecked")
+	@GET()
+	@Path("/samples")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSamples(@Context HttpServletResponse response) {
+		try {
+			System.out.println("GET samples");
+			ObjectContext objectContext = Hackathon2016Database.getInstance().getServerRuntime().getContext();
+			SelectQuery query = new SelectQuery(Sample.class);
+			List<Sample> samples = (List<Sample>) objectContext.performQuery(query);
+
+			JsonArrayBuilder arrayBuilder = JsonUtils.jsonArrayBuilder();
+			for(Sample sample: samples) {
+				arrayBuilder.add(JsonUtils.jsonObjectBuilder()
+						.add("id", sample.getSmpID())
+						.add("source", sample.getSource())
+						.build());
+			}
+			JsonObject result = JsonUtils.jsonObjectBuilder()
+					.add("samples", arrayBuilder.build())
+					.build();
+
+			String commandResult = JsonUtils.prettyPrint(result);
+			System.out.println("commandResult: "+commandResult);
+			addCacheDisablingHeaders(response);
+			return commandResult;
+		} catch(Throwable th) {
+			logger.log(Level.SEVERE, "Error during GET samples: "+th.getMessage(), th);
+			throw th;
+		} 
+	} 
+
+	@SuppressWarnings("unchecked")
 	@POST()
+	@Path("/sequences")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String post(String commandString, @Context HttpServletResponse response) {
-		System.out.println("POST received: "+commandString);
-		String commandResult = "{ok: 1234}";
-		addCacheDisablingHeaders(response);
-		return commandResult;
-	}
+	public String getSequences(String commandString, @Context HttpServletResponse response) {
+		try {
+			System.out.println("POST update for :"+commandString);
+
+			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
+
+			Integer sampleId = ((JsonNumber) requestObj.get("sampleId")).intValue();
+
+			ObjectContext objectContext = Hackathon2016Database.getInstance().getServerRuntime().getContext();
+			Expression exp = ExpressionFactory
+					.matchExp(Sequence.SMP_ID_PROPERTY, sampleId);
+			SelectQuery query = new SelectQuery(Sequence.class, exp);
+
+			List<Sequence> sequences = (List<Sequence>) objectContext.performQuery(query);
+
+			JsonArrayBuilder arrayBuilder = JsonUtils.jsonArrayBuilder();
+			for(Sequence sequence: sequences) {
+				arrayBuilder.add(JsonUtils.jsonObjectBuilder()
+						.add("sequenceId", sequence.getSeqID())
+						.add("libPrep", sequence.getLibPrep())
+						.add("technology", sequence.getTechnology())
+						.add("seqType", sequence.getSeqType())
+						.build());
+			}
+			JsonObject result = JsonUtils.jsonObjectBuilder()
+					.add("sequences", arrayBuilder.build())
+					.build();
+
+			String commandResult = JsonUtils.prettyPrint(result);
+			System.out.println("commandResult: "+commandResult);
+			addCacheDisablingHeaders(response);
+			return commandResult;
+		} catch(Throwable th) {
+			logger.log(Level.SEVERE, "Error during post: "+th.getMessage(), th);
+			throw th;
+		} 
+	} 
+
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@POST()
+	@Path("/getContigs")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getContigs(String commandString, @Context HttpServletResponse response) {
+		try {
+			System.out.println("Get contigs for :"+commandString);
+
+			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
+			
+			String sequenceId = ((JsonString) requestObj.get("sequenceId")).getString();
+
+			ObjectContext objectContext = Hackathon2016Database.getInstance().getServerRuntime().getContext();
+			Expression exp = ExpressionFactory
+					.matchExp(MergeTable.SEQ_ID_PROPERTY, sequenceId);
+			SelectQuery query = new SelectQuery(MergeTable.class, exp);
+
+			List<MergeTable> mergeTableRecords = (List<MergeTable>) objectContext.performQuery(query);
+
+			JsonArrayBuilder arrayBuilder = JsonUtils.jsonArrayBuilder();
+			for(MergeTable mergeTableRecord: mergeTableRecords) {
+				arrayBuilder.add(JsonUtils.jsonObjectBuilder()
+						.add("contigId", mergeTableRecord.getContigID())
+						.add("seqId", mergeTableRecord.getSeqID())
+						.build());
+			}
+			JsonObject result = JsonUtils.jsonObjectBuilder()
+					.add("contigs", arrayBuilder.build())
+					.build();
+
+			String commandResult = JsonUtils.prettyPrint(result);
+			System.out.println("commandResult: "+commandResult);
+			addCacheDisablingHeaders(response);
+			return commandResult;
+		} catch(Throwable th) {
+			logger.log(Level.SEVERE, "Error during post: "+th.getMessage(), th);
+			throw th;
+		} 
+	} 
+
+	
 	
 	// URL navigation
 	@Path("/{urlPathSegment}")

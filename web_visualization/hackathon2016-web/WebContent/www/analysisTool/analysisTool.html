@@ -1,0 +1,320 @@
+
+
+<!-- 1. nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}" -->
+<div ng-app="analysisTool">
+
+	<div nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+		<h2>Sequence typing and interpretation</h2>
+		<p>Submit your sequence files in FASTA nucleotide format for automated analysis of the sequence type and interpretation of the nucleotide content.</p>
+		<div>
+			<div>
+	
+				<table class="table" width="100%">
+					<thead>
+						<col width="20%"></col>
+						<col width="20%"></col>
+						<col width="0%"></col>
+						<col width="20%"></col>
+						<col width="20%"></col>
+						<col width="20%"></col>
+						<tr>
+							<th>File</th>
+							<th ng-show="uploader.isHTML5">Size</th>
+							<th colspan="2">Variation categories</th>
+							<th>Status</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="item in uploader.queue">
+							<td><strong>{{ item.file.name }}</strong></td>
+							<td ng-show="uploader.isHTML5" nowrap>{{
+								item.file.size/1024/1024|number:2 }} MB</td>
+							<td nowrap>
+								<div ng-show="item.variationCategorySelection.length == 0">None selected</div>
+								<div style="display:table;">
+									<div style="display:table-row;" ng-repeat="vCat in item.variationCategorySelection" >
+										<svg width="40px" height="22px" style="display:table-cell; padding-right:5px">
+											<rect ng-attr-class="vcat_{{vCat.name}}" y="15%" width="100%" height="70%"></rect>
+											<rect class="varBox" y="15%" width="100%" height="70%"></rect>
+										</svg>
+										<div style="display:table-cell; vertical-align: middle;">{{vCat.displayName}}</div>
+									</div>
+								</div>
+							</td>
+							<td>
+								<button type="button" class="btn btn-primary btn-xs"
+									ng-click="selectVariationCategories(item)" 
+									ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+									<span class="glyphicon glyphicon-list"></span> Select
+								</button>
+							</td>
+							<td>
+								<span ng-show="item.isSuccess">
+									<i class="glyphicon glyphicon-ok"></i>
+								</span> 
+								<span ng-show="item.isCancel">
+									<i class="glyphicon glyphicon-ban-circle"></i>
+								</span>
+								<span ng-show="item.isUploading">
+									<i class="glyphicon glyphicon-transfer"></i>
+								</span>
+								<span ng-show="item.isError">
+									<i class="glyphicon glyphicon-remove"></i>
+								</span></td>
+							<td nowrap>
+								<button type="button" class="btn btn-primary btn-xs"
+									ng-click="item.upload()"
+									ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+									<span class="glyphicon glyphicon-upload"></span> Submit
+								</button>
+								<button type="button" class="btn btn-primary btn-xs"
+									ng-click="showAnalysisResults(item)" ng-disabled="!item.isSuccess">
+									<span class="glyphicon glyphicon-list"></span> Show analysis
+								</button>
+								<button type="button" class="btn btn-primary btn-xs"
+									ng-click="removeItem(item)">
+									<span class="glyphicon glyphicon-trash"></span> Remove
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+	
+				<div>
+					<label class="btn btn-primary" for="my-file-selector"> <input
+						id="my-file-selector" type="file" nv-file-select=""
+						uploader="uploader" multiple style="display: none;">
+						<span class="glyphicon glyphicon-plus-sign"></span> Add files
+					</label>
+					<button type="button" class="btn btn-primary btn-s"
+						ng-click="uploader.uploadAll()"
+						ng-disabled="!uploader.getNotUploadedItems().length">
+						<span class="glyphicon glyphicon-upload"></span> Submit all files
+					</button>
+					<button type="button" class="btn btn-primary btn-s"
+						ng-click="removeAll()"
+						ng-disabled="!uploader.queue.length">
+						<span class="glyphicon glyphicon-trash"></span> Remove all files
+					</button>
+				</div>
+	
+			</div>
+	
+			<div ng-show="fileItemUnderAnalysis">
+				<h3>Analysis Results</h3>
+				<div class="btn-group">
+					<label class="btn btn-primary btn-xs ng-pristine ng-untouched ng-valid active" 
+						ng-model="analysisView" btn-radio="'typingSummary'">Typing summary</label>
+					<label class="btn btn-primary btn-xs ng-pristine ng-untouched ng-valid active" 
+						ng-disabled="!enableVariationSummary" ng-model="analysisView" btn-radio="'variationSummary'">Variation summary</label>
+					<label class="btn btn-primary btn-xs ng-pristine ng-untouched ng-valid" 
+						ng-model="analysisView" btn-radio="'genomeDetail'">Genome detail</label>
+				</div>
+
+
+				<div ng-show="analysisView == 'typingSummary'">
+					<table class="table table-nonfluid" width="100%">
+						<thead>
+							<tr>
+								<th>File</th>
+								<th>Query sequence</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{{fileItemUnderAnalysis.file.name}}</td>
+								<td>
+									<select ng-model="selectedQueryAnalysis" 
+										ng-options="queryAnalysis.fastaId for queryAnalysis in fileItemUnderAnalysis.webAnalysisResult.queryAnalysis"
+										>
+								    </select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-bordered table-striped table-nonfluid">
+						<thead>
+							<col width="300px"></col>
+							<col width="300px"></col>
+						</thead>
+						<tbody>
+							<tr><td><b>Query sequence clade</b></td><td>
+								<a href="#/project/alignment/{{selectedQueryAnalysis.typingAnalysis.typeAlignmentName}}" target="_blank">
+									{{selectedQueryAnalysis.typingAnalysis.typeAlignmentDisplayName}}  <i class="glyphicon glyphicon-link"/></a></td></tr>
+							<tr><td><b>Closest reference sequence</b></td><td>
+								<a href="#/project/sequence/{{selectedQueryAnalysis.typingAnalysis.closestMemberSourceName}}/{{selectedQueryAnalysis.typingAnalysis.closestMemberSequenceID}}" target="_blank">
+									{{selectedQueryAnalysis.typingAnalysis.closestMemberSourceName}}/{{selectedQueryAnalysis.typingAnalysis.closestMemberSequenceID}}  <i class="glyphicon glyphicon-link"/></a></td></tr>
+							<tr><td><b>Distance to closest reference sequence</b></td><td>{{toFixed(selectedQueryAnalysis.typingAnalysis.distanceToClosestMember,4)}}</td></tr>
+							<tr><td><b>Likelihood / weight ratio</b></td><td>{{selectedQueryAnalysis.typingAnalysis.likeWeightRatio}}</td></tr>
+						<tbody>
+					</table>
+					
+				</div>
+
+				<div ng-show="analysisView == 'variationSummary'">
+					<table class="table table-nonfluid" width="100%">
+						<thead>
+							<tr>
+								<th>File</th>
+								<th>Query sequence</th>
+								<th>Variation category</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{{fileItemUnderAnalysis.file.name}}</td>
+								<td>
+									<select ng-model="selectedQueryAnalysis" 
+										ng-options="queryAnalysis.fastaId for queryAnalysis in fileItemUnderAnalysis.webAnalysisResult.queryAnalysis"
+										>
+								    </select>
+								</td>
+								<td>
+									<select ng-model="selectedVariationCategoryResult" 
+										ng-options="resultVariationCategory.displayName for resultVariationCategory in fileItemUnderAnalysis.webAnalysisResult.variationCategoryResult"
+										>
+								    </select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div ng-show="resultVariationMatchesPresent">
+						<h4>{{selectedVariationCategoryResult.displayName}} where a match was found in the query sequence: {{resultVariationMatchesPresent.number}}</h4>
+						<table ng-show="resultVariationMatchesPresent.matches.length > 0" class="table" width="100%">
+							<thead>
+								<col width="2%"></col>
+								<col width="2%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<tr>
+									<th>Reference sequence</th>
+									<th>Genome feature</th>
+									<th colspan="{{variationsPerRow}}">{{selectedVariationCategoryResult.displayName}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="resultVariationMatch in resultVariationMatchesPresent.matches">
+									<td ng-show="resultVariationMatch.showDefining" rowspan="{{resultVariationMatch.rowspan}}">{{resultVariationMatch.definingReferenceName}}</td>
+									<td ng-show="resultVariationMatch.showDefining" rowspan="{{resultVariationMatch.rowspan}}"><a ng-click="switchToFeatureDetail(resultVariationMatch.definingReferenceName, resultVariationMatch.definingFeatureName)">{{resultVariationMatch.definingFeatureName}} <i class="glyphicon glyphicon-link"></i></a></td>
+									<td ng-repeat="variation in resultVariationMatch.variation">
+										<a ng-click="displayVariation(selectedVariationCategoryResult.name, resultVariationMatch.definingReferenceName, resultVariationMatch.definingFeatureName, variation.name)">{{variation.renderedName}} <i class="glyphicon glyphicon-link"></i></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div ng-show="resultVariationMatchesAbsent">
+						<h4>{{selectedVariationCategoryResult.displayName}} where no match was found in the query sequence: {{resultVariationMatchesAbsent.number}}</h4>
+						<table ng-show="resultVariationMatchesAbsent.matches.length > 0" class="table" width="100%">
+							<thead>
+								<col width="2%"></col>
+								<col width="2%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<col width="12%"></col>
+								<tr>
+									<th>Reference sequence</th>
+									<th>Genome feature</th>
+									<th colspan="{{variationsPerRow}}">{{selectedVariationCategoryResult.displayName}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="resultVariationMatch in resultVariationMatchesAbsent.matches">
+									<td ng-show="resultVariationMatch.showDefining" rowspan="{{resultVariationMatch.rowspan}}">{{resultVariationMatch.definingReferenceName}}</td>
+									<td ng-show="resultVariationMatch.showDefining" rowspan="{{resultVariationMatch.rowspan}}"><a ng-click="switchToFeatureDetail(resultVariationMatch.definingReferenceName, resultVariationMatch.definingFeatureName)">{{resultVariationMatch.definingFeatureName}} <i class="glyphicon glyphicon-link"></i></a></td>
+									<td ng-repeat="variation in resultVariationMatch.variation">
+										<a ng-click="displayVariation(selectedVariationCategoryResult.name, resultVariationMatch.definingReferenceName, resultVariationMatch.definingFeatureName, variation.name)">{{variation.renderedName}} <i class="glyphicon glyphicon-link"></i></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div ng-show="analysisView == 'genomeDetail'">
+					<table class="table table-nonfluid" width="100%">
+						<thead>
+							<tr>
+								<th>File</th>
+								<th>Query sequence</th>
+								<th>Reference sequence</th>
+								<th>Genome feature</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{{fileItemUnderAnalysis.file.name}}</td>
+								<td>
+									<select ng-model="selectedQueryAnalysis" 
+										ng-options="queryAnalysis.fastaId for queryAnalysis in fileItemUnderAnalysis.webAnalysisResult.queryAnalysis"
+										>
+								    </select>
+								</td>
+								<td>
+									<select ng-model="selectedRefName" 
+										ng-options="x for x in selectedQueryAnalysis.ancestorRefName"
+										>
+								    </select>
+								</td>
+								<td>
+									<select ng-model="selectedFeatureAnalysis" 
+										ng-options="featureAnalysis.featureName for featureAnalysis in fileItemUnderAnalysis.webAnalysisResult.featureAnalysis"
+										>
+								    </select>
+								
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="container">
+						<div class="row" ng-controller='analysisSvg'>
+					        <div class="col-xs-2">
+								<svg ng-attr-height="{{svgHeight()}}">
+									 <sequence-label sequence-label="selectedRefName" svg-params="svgParams" sequence-index="0"> </sequence-label>
+									 <sequence-label sequence-label="'Query'" svg-params="svgParams" sequence-index="1"> </sequence-label>
+									 <sequence-label ng-show="svgParams.svgVariations()" sequence-label="'Variations'" svg-params="svgParams" sequence-index="2"> </sequence-label>
+								</svg>
+					        </div>
+					        <div class="col-xs-9">
+					        	<div style="overflow: auto">
+									<svg 
+										ng-attr-height="{{svgHeight()}}" 
+										ng-attr-width="{{svgWidth()}}">
+										<g codon-label-line svg-params="svgParams" 
+												selected-feature-analysis="selectedFeatureAnalysis"
+												analysis-view="analysisView"></g>
+										<g reference-sequence svg-params="svgParams" 
+												selected-feature-analysis="selectedFeatureAnalysis"
+												selected-ref-feat-analysis="selectedRefFeatAnalysis"
+												sequence-index="0"
+												analysis-view="analysisView"></g>
+										<g query-sequence svg-params="svgParams" 
+												selected-feature-analysis="selectedFeatureAnalysis"
+												selected-ref-name="selectedRefName"
+												selected-query-feat-analysis="selectedQueryFeatAnalysis"
+												selected-query-analysis="selectedQueryAnalysis"
+												sequence-index="1"
+												variation-categories="variationCategories"
+												analysis-view="analysisView"></g>
+									</svg>
+						        </div>
+					        </div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

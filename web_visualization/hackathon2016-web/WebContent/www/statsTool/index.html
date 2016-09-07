@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+	<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="pragma" content="no-cache" />
+
+	<!-- Due to a bug in webcomponents, I can't use CSS with HTML imports -->
+	<!-- (at least in IE) -->
+	<!-- https://github.com/webcomponents/webcomponentsjs/issues/400 -->
+	<link rel="stylesheet" href="../../bootstrap/css/bootstrap-yeti.css"/>
+	<link rel="stylesheet" href="../css/style.css"/>
+	<link rel="stylesheet" href="./statsToolApp.css"/>
+
+
+	<!-- Polyfill, required for browsers that do not support link rel="import" -->
+	<script type="text/javascript" src="../../webcomponents/webcomponents-lite.min.js"></script>
+
+	<link rel="import" href="./statsToolDependencies.html"/>
+</head>
+<body>
+
+
+<div class="container" ng-app="statsToolApp">
+
+	<div ng-controller="statsToolCtrl">
+		<h2>Bioinformatics Hackathon 2016</h2>
+		<p>
+		Sample:
+		<select ng-model="currentSample"
+				ng-options="sample.source for sample in samples">
+		</select>
+		</p>
+		<p>
+		Sequencing run:
+		<select ng-disable="!sequences"
+				ng-model="currentSequence"
+				ng-options="sequence.sequenceId for sequence in sequences">
+		</select>
+		</p>
+		<p>
+		X metric:
+		<select ng-model="xMetric"
+				ng-options="metric.description for metric in sequenceMetrics">
+		</select>
+		</p>
+		<p>
+		Y metric:
+		<select ng-model="yMetric"
+				ng-options="metric.description for metric in sequenceMetrics">
+		</select>
+		</p>
+		
+		<button type="button" class="btn btn-primary btn-xs"
+			ng-click="getContigs()"
+			ng-disabled="false">Update</button>
+	</div>
+
+</div>
+
+</body>
+</html>

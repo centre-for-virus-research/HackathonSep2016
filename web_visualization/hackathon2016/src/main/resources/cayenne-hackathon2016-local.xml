@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<domain project-version="6">
+	<map name="datamap-local"/>
+
+	<node name="local"
+		 factory="org.apache.cayenne.configuration.server.XMLPoolingDataSourceFactory"
+		 schema-update-strategy="org.apache.cayenne.access.dbsync.SkipSchemaUpdateStrategy"
+		>
+		<map-ref name="datamap-local"/>
+		<data-source>
+			<driver value="com.mysql.jdbc.Driver"/>
+			<url value="jdbc:mysql://localhost:3306/Hack?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true&amp;charac‌​terEncoding=UTF-8&amp;ch‌​aracterSetResults=UT‌​F-8"/>
+			<connectionPool min="1" max="1"/>
+			<login userName="gluetools" password="gluetools"/>
+		</data-source>
+	</node>
+</domain>

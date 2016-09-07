@@ -1,0 +1,95 @@
+.variationCategory {
+   bold: true;
+   font-size: 130%;
+   vertical-align: middle;
+}
+
+
+.sequenceLabel {
+}
+
+.queryAa, .queryAaDiff, .queryNt, .queryNtDiff, .codonLabel, .referenceAa, .referenceNt {
+}
+
+.queryNtIndex, .referenceNtIndex {
+    writing-mode: tb;
+}
+
+.sequenceLabel, .codonLabel, .referenceAa, .queryAa, .queryAaDiff {
+	font-size: 120%;
+}
+
+.referenceNt, .queryNt, .queryNtDiff {
+	font-size: 90%;
+}
+
+.queryNtIndex, .referenceNtIndex {
+	font-size: 100%;
+}
+	
+.sequenceLabel {
+	fill: #222222;
+}
+
+.codonLabel {
+	fill: #222222;
+}
+
+.referenceAa, .queryAa, .queryAaDiff, .referenceNt, .queryNt, .queryNtDiff  {
+	font-weight: bold;
+}
+
+.referenceAa {
+	fill: #3a5c7e;
+}
+
+.referenceAaBackground {
+	fill: #ddeeff;
+}
+
+.queryAa {
+	fill: #557733;
+}
+
+.queryAaBackground {
+	fill: #ddeecc;
+}
+
+.queryAaDiff, .queryNtDiff {
+	fill: #ffffff;
+}
+
+.queryAaDiffBackground, .queryNtDiffBackground {
+	fill: #aaaaaa;
+}
+
+.referenceNt, .referenceNtIndex {
+	fill: #88aacc;
+}
+
+.queryNt, .queryNtIndex {
+	fill: #99bb77;
+}
+
+.varHighlight {
+	fill: #e6f9ff;
+}
+
+.varBox {
+	stroke: #333333;
+	fill: none;
+}
+
+.varTooltipRect {
+	fill: #ffffff;
+}
+
+.varTooltipBox {
+	stroke: #333333;
+	fill: none;
+}
+
+.varTooltipText {
+	fill: #333333;
+}
+

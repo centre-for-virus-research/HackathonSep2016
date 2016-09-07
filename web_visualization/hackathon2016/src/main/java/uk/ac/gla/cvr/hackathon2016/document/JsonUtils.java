@@ -1,4 +1,4 @@
-package hackathon2016.document;
+package uk.ac.gla.cvr.hackathon2016.document;
 
 import java.io.StringReader;
 import java.io.StringWriter;
