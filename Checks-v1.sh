@@ -8,7 +8,8 @@
 #Convert the blast db to fastas
 
 # fastacmd -d nr -p T -a T -D 1 -o nr.faa
-# blastdbcmd -db nr -dbtype prot -get_dups -outfmt %f -out nr_blastdbcmd.faa
+# http://www.ncbi.nlm.nih.gov/books/NBK279689/
+# blastdbcmd -db nr -entry all -dbtype prot -get_dups -outfmt %f -out nr_blastdbcmd.faa
 
 usage=`echo -e "\n Usage: Checks-v1.sh ContigFile.fa Outprefix\n"`;
 
