@@ -1,7 +1,6 @@
 package uk.ac.gla.cvr.hackathon2016;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,6 +8,7 @@ import java.util.logging.Logger;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -37,7 +37,6 @@ public class Hackathon2016Controller {
 	public Hackathon2016Controller() {
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET()
 	@Path("/sequenceMetrics")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -144,10 +143,6 @@ public class Hackathon2016Controller {
 			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
 			
 			String sequenceId = ((JsonString) requestObj.get("sequenceId")).getString();
-			String xMetricString = ((JsonString) requestObj.get("xMetric")).getString();
-			SequenceMetric xMetric = SequenceMetric.valueOf(xMetricString);
-			String yMetricString = ((JsonString) requestObj.get("yMetric")).getString();
-			SequenceMetric yMetric = SequenceMetric.valueOf(yMetricString);
 			
 			ObjectContext objectContext = Hackathon2016Database.getInstance().getServerRuntime().getContext();
 			Expression exp = ExpressionFactory
@@ -159,37 +154,37 @@ public class Hackathon2016Controller {
 			JsonArrayBuilder arrayBuilder = JsonUtils.jsonArrayBuilder();
 			
 			List<ContigPoint> contigPoints = new ArrayList<ContigPoint>();
-			Double maxUnscaledX = null;
-			Double maxUnscaledY = null;
+			Double[] maxUnscaledMetric = new Double[SequenceMetric.values().length];
 			
 			for(MergeTable mergeTableRecord: mergeTableRecords) {
-				Double xPropertyVal = xMetric.mapToDouble(mergeTableRecord.readProperty(xMetric.getMergeTableProperty()));
-				Double yPropertyVal = yMetric.mapToDouble(mergeTableRecord.readProperty(yMetric.getMergeTableProperty()));
-				boolean isDark = determineIfDark(mergeTableRecord);
 				ContigPoint contigPoint = new ContigPoint();
 				contigPoint.contigId = mergeTableRecord.getContigID();
-				contigPoint.unscaledX = xPropertyVal;
-				if(maxUnscaledX == null || xPropertyVal > maxUnscaledX) {
-					maxUnscaledX = xPropertyVal;
+				contigPoint.isDark = determineIfDark(mergeTableRecord);
+				for(SequenceMetric metric: SequenceMetric.values()) {
+					Object propertyValObj = mergeTableRecord.readProperty(metric.getMergeTableProperty());
+					Double propertyVal = metric.mapToDouble(propertyValObj);
+					int metricOrdinal = metric.ordinal();
+					if(maxUnscaledMetric[metricOrdinal] == null || 
+							propertyVal > maxUnscaledMetric[metricOrdinal]) {
+						maxUnscaledMetric[metricOrdinal] = propertyVal;
+					}
+					contigPoint.metrics[metricOrdinal] = propertyVal;
+					
 				}
-				contigPoint.unscaledY = yPropertyVal;
-				if(maxUnscaledY == null || yPropertyVal > maxUnscaledY) {
-					maxUnscaledY = yPropertyVal;
-				}
-				contigPoint.isDark = isDark;
 				contigPoints.add(contigPoint);
 			}
 			for(ContigPoint contigPoint: contigPoints) {
-				arrayBuilder.add(JsonUtils.jsonObjectBuilder()
-						.add("contigId", contigPoint.contigId)
-						.add("x", contigPoint.unscaledX / maxUnscaledX)
-						.add("y", contigPoint.unscaledY / maxUnscaledY)
-						.add("isDark", contigPoint.isDark)
-						.build());
+				JsonObjectBuilder contigObjBuilder = JsonUtils.jsonObjectBuilder();
+				contigObjBuilder.add("contigId", contigPoint.contigId);
+				contigObjBuilder.add("isDark", contigPoint.isDark);
+				for(SequenceMetric sequenceMetric: SequenceMetric.values()) {
+					int ordinal = sequenceMetric.ordinal();
+					contigObjBuilder.add(sequenceMetric.name(), 
+							contigPoint.metrics[ordinal] / maxUnscaledMetric[ordinal]);
+				}
+				arrayBuilder.add(contigObjBuilder.build());
 			}
 			JsonObject result = JsonUtils.jsonObjectBuilder()
-					.add("xLabel", xMetric.getDescription())
-					.add("yLabel", yMetric.getDescription())
 					.add("contigs", arrayBuilder.build())
 					.build();
 
@@ -205,8 +200,7 @@ public class Hackathon2016Controller {
 
 	private class ContigPoint {
 		String contigId;
-		double unscaledX;
-		double unscaledY;
+		double[] metrics = new double[SequenceMetric.values().length];
 		boolean isDark;
 	}
 	

@@ -9,20 +9,38 @@ function ($scope, $http) {
 	  $scope.svgHeight = 800;
 	  
 	  $scope.svg = d3.select("svg");
+	  $scope.contigs = [];
 	  
-	  $scope.updateData = function(contigs) {
+	  $scope.updateData = function() {
 		
 		d3.selectAll("svg > *").remove();
-		  
+		
+		if(!$scope.xMetric) {
+			return;
+		}
+		if(!$scope.yMetric) {
+			return;
+		}
+		
+		var xMetricProperty = $scope.xMetric.property;
+		var yMetricProperty = $scope.yMetric.property;
+		
+		console.log("xMetricProperty: ", xMetricProperty);
+		console.log("yMetricProperty: ", yMetricProperty);
+		
 		var selection = 
 		  	$scope.svg
 		  	.selectAll("circle")
-		  	.data(contigs);
+		  	.data($scope.contigs);
 		
 	  	selection.enter()
 		  	.append("circle")
-		  	.attr("cx", function(d) {return 5+(d.x * ($scope.svgWidth-10));})
-		  	.attr("cy", function(d) {return 5+(d.y * ($scope.svgHeight-10));})
+		  	.attr("cx", function(d) {
+		  		return 10+(d[xMetricProperty] * ($scope.svgWidth-20));
+		  	})
+		  	.attr("cy", function(d) {
+		  		return 10+((1.0-d[yMetricProperty]) * ($scope.svgHeight-20));
+		  	})
 		  	.attr("r", 5)
 		  	.style("fill", function(d) {
 		  		if(d.isDark) 
@@ -33,8 +51,6 @@ function ($scope, $http) {
 	  	
 	  }
 	  
-	  $scope.updateData([]);
-	  	
 	  console.log("retrieving sequence metrics");
 	  $http.get("../../../hackathon2016/sequenceMetrics")
 	    .success(function(data, status, headers, config) {
@@ -52,6 +68,21 @@ function ($scope, $http) {
 
 		$scope.$watch( 'currentSample', function(newObj, oldObj) {
 			$scope.currentSampleChanged();
+			$scope.contigs = [];
+			$scope.updateData();
+		}, false);
+
+		$scope.$watch( 'currentSequence', function(newObj, oldObj) {
+			$scope.contigs = [];
+			$scope.updateData();
+		}, false);
+
+		$scope.$watch( 'xMetric', function(newObj, oldObj) {
+			$scope.updateData();
+		}, false);
+
+		$scope.$watch( 'yMetric', function(newObj, oldObj) {
+			$scope.updateData();
 		}, false);
 
 	  
@@ -91,15 +122,14 @@ function ($scope, $http) {
 	  
 	  $scope.getContigs = function() {
 		  var requestObj = {
-				  sequenceId: $scope.currentSequence.sequenceId, 
-				  xMetric: $scope.xMetric.property, 
-				  yMetric: $scope.yMetric.property 
+				  sequenceId: $scope.currentSequence.sequenceId
 		  };
 		  console.log("Updating for request", requestObj);
 		  $http.post("../../../hackathon2016/getContigs", requestObj)
 		  .success(function(data, status, headers, config) {
 			  console.info('success', data);
-			  $scope.updateData(data.contigs);
+			  $scope.contigs = data.contigs;
+			  $scope.updateData();
 		  })
 		  .error(function(data, status, headers, config) {
 			  console.info('error', data);

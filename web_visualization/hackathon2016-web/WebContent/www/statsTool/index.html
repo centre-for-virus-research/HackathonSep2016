@@ -40,6 +40,11 @@
 		</select>
 		</p>
 		<p>
+		<button type="button" class="btn btn-primary btn-xs"
+			ng-click="getContigs()"
+			ng-disabled="false">Retrieve contig data</button>
+		</p>
+		<p>
 		X metric:
 		<select ng-model="xMetric"
 				ng-options="metric.description for metric in sequenceMetrics">
@@ -52,10 +57,6 @@
 		</select>
 		</p>
 		
-		<button type="button" class="btn btn-primary btn-xs"
-			ng-click="getContigs()"
-			ng-disabled="false">Update</button>
-		<p></p>
 		<svg ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}"></svg>
 	</div>
 
