@@ -5,8 +5,8 @@ statsToolApp.controller('statsToolCtrl',
   [ '$scope', '$http',
 function ($scope, $http) {
 
-	  $scope.svgWidth = 600;
-	  $scope.svgHeight = 600;
+	  $scope.svgWidth = 550;
+	  $scope.svgHeight = 550;
 	  
 	  $scope.svg = d3.select("svg");
 	  $scope.contigs = [];
@@ -23,11 +23,11 @@ function ($scope, $http) {
 		}
 		
 		d3.select("svg")
-			.append("rect")
-			.attr("width", $scope.svgWidth)
-			.attr("height", $scope.svgHeight)
-			.style("stroke", "black")
-			.style("fill", "white");
+		.append("rect")
+		.attr("width", $scope.svgWidth)
+		.attr("height", $scope.svgHeight)
+		.style("stroke", "black")
+		.style("fill", "white");
 		
 		var xMetricProperty = $scope.xMetric.property;
 		var yMetricProperty = $scope.yMetric.property;
@@ -36,6 +36,12 @@ function ($scope, $http) {
 		console.log("yMetricProperty: ", yMetricProperty);
 		
 		var darkFill = function(d) {return d.isDark ? "#91e6e9" : "#e99491"};
+		var cX = function(d) {
+	  		return 10+(d[xMetricProperty] * ($scope.svgWidth-20));
+	  	};
+		var cY = function(d) {
+	  		return 10+((1.0-d[yMetricProperty]) * ($scope.svgHeight-20));
+	  	};
 		
 		var selection = 
 		  	$scope.svg
@@ -44,18 +50,30 @@ function ($scope, $http) {
 		
 	  	selection.enter()
 		  	.append("circle")
-		  	.attr("cx", function(d) {
-		  		return 10+(d[xMetricProperty] * ($scope.svgWidth-20));
-		  	})
-		  	.attr("cy", function(d) {
-		  		return 10+((1.0-d[yMetricProperty]) * ($scope.svgHeight-20));
-		  	})
+		  	.attr("cx", cX)
+		  	.attr("cy", cY)
 		  	.attr("r", 5)
 		  	.style("fill", darkFill)
 		  	.style("stroke", "black")
 		  	.on("mouseover", function(){d3.select(this).style("fill", "black");})
 		  	.on("mouseout", function(){d3.select(this).style("fill", darkFill);})
+		  	.on("click", function(d){
+		  		console.log("Selected contig ID:", d.contigId);
+		  		$scope.getContigDetails(d.contigId);
+		  		$scope.selectedCircle
+			  	.attr("cx", cX(d))
+			  	.attr("cy", cY(d));
+		  	})
         ;
+	  	
+	  	$scope.selectedCircle = d3.select("svg")
+	  	.append("circle")
+	  	.attr("cx", -200)
+	  	.attr("cy", -200)
+	  	.attr("r", 10)
+	  	.style("fill", "none")
+	  	.style("stroke", "black")
+	  	.style("stroke-width", "3")
 	  	
 	  }
 	  
@@ -143,6 +161,24 @@ function ($scope, $http) {
 			  console.info('error', data);
 		  });
 	  }
+
+	  
+	  $scope.getContigDetails = function(contigId) {
+		  var requestObj = {
+				  contigId: contigId
+		  };
+		  console.log("Retrieving contig details", requestObj);
+		  $http.post("../../../hackathon2016/getContigDetails", requestObj)
+		  .success(function(data, status, headers, config) {
+			  console.info('success', data);
+			  $scope.contigDetails = data;
+		  })
+		  .error(function(data, status, headers, config) {
+			  console.info('error', data);
+		  });
+	  }
+
+	  
 	  
   } ]);
 

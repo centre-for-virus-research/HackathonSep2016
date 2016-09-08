@@ -31,15 +31,11 @@
 		<select ng-model="currentSample"
 				ng-options="sample.source for sample in samples">
 		</select>
-		</p>
-		<p>
 		Sequencing run:
 		<select ng-disable="!sequences"
 				ng-model="currentSequence"
 				ng-options="sequence.sequenceId for sequence in sequences">
 		</select>
-		</p>
-		<p>
 		<button type="button" class="btn btn-primary btn-xs"
 			ng-click="getContigs()"
 			ng-disabled="false">Retrieve contig data</button>
@@ -58,7 +54,30 @@
 			</select>
 			</p>
 			
-			<svg ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}"></svg>
+			
+			<div class="row">
+			    <div class="col-md-6">
+						<svg ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}"></svg>
+			    </div>
+			    <div ng-show="contigDetails" class="col-md-6">
+			    	<h3>{{contigDetails.isDark ? "Dark contig": "Known contig"}}</h3>
+					<table class="table table-striped table-bordered"
+						style="table-layout: fixed; word-wrap: break-word;">
+						<thead>
+							<col width="30%"></col>
+							<col width="70%"></col>
+						</thead>
+						<tr ng-repeat="(key, value) in contigDetails">
+							<td><b>{{key}}</b></td>
+							<td>{{value}}</td>
+						</tr>
+					</table>
+			    </div>
+			</div>
+			
+			
+			
+			
 		</div>
 	</div>
 

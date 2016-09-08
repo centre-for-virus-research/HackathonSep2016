@@ -2,6 +2,7 @@ package uk.ac.gla.cvr.hackathon2016;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -198,6 +199,68 @@ public class Hackathon2016Controller {
 		} 
 	}
 
+
+	
+	
+	@SuppressWarnings("unchecked")
+	@POST()
+	@Path("/getContigDetails")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getContigDetails(String commandString, @Context HttpServletResponse response) {
+		try {
+			System.out.println("Get contig details for :"+commandString);
+
+			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
+			
+			String contigId = ((JsonString) requestObj.get("contigId")).getString();
+			
+			ObjectContext objectContext = 
+					Hackathon2016Database.getInstance().getServerRuntime().getContext();
+			Expression exp = ExpressionFactory
+					.matchExp(MergeTable.CONTIG_ID_PROPERTY, contigId);
+			SelectQuery query = new SelectQuery(MergeTable.class, exp);
+			List<MergeTable> mergeTableRecords = (List<MergeTable>) objectContext.performQuery(query);
+
+			MergeTable resultContig = mergeTableRecords.get(0);
+			
+			JsonObjectBuilder contigObjBuilder = JsonUtils.jsonObjectBuilder();
+			contigObjBuilder.add("contigId", resultContig.getContigID());
+			contigObjBuilder.add("isDark", determineIfDark(resultContig));
+			
+			for(SequenceMetric metric: SequenceMetric.values()) {
+				Object propertyValObj = resultContig.readProperty(metric.getMergeTableProperty());
+				contigObjBuilder.add(metric.getDescription(), metric.mapToDouble(propertyValObj));
+			}
+
+			
+			Optional.ofNullable(resultContig.getAdaptorSubjectId())
+			.ifPresent(s -> contigObjBuilder.add("Adaptor subject ID", s));
+			Optional.ofNullable(resultContig.getBlastSubjectId())
+			.ifPresent(s -> contigObjBuilder.add("BLAST subject ID", s));
+			Optional.ofNullable(resultContig.getDiamondSubjectId())
+			.ifPresent(s -> contigObjBuilder.add("Diamond subject ID", s));
+			contigObjBuilder.add("Sequence", resultContig.getSeq());
+
+			JsonObject result = contigObjBuilder.build();
+
+			String commandResult = JsonUtils.prettyPrint(result);
+			System.out.println("commandResult: "+commandResult);
+			addCacheDisablingHeaders(response);
+			return commandResult;
+		} catch(Throwable th) {
+			logger.log(Level.SEVERE, "Error during post: "+th.getMessage(), th);
+			throw th;
+		} 
+	}
+
+	
+	
+	
+	
+	
+	
+	
 	private class ContigPoint {
 		String contigId;
 		double[] metrics = new double[SequenceMetric.values().length];
