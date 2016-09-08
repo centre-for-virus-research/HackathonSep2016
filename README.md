@@ -66,4 +66,7 @@ java -jar RandomDark.jar NumberOfReads[int] ReadLength[int] OutputFilenameStub[s
 java -jar RandomVirus.jar InputSequenFileName[string] NumberOfReads[int] ReadLength[int] EqualProbability[y/n] OutputFilenameStub[string]
 
 ```
-
+**extarctDarkContigs.sh** and **DarkContigs.sql** Bash and SQL script to extract current dark sequences from the database and re-run classification using latest version of the nt and nr DB using BLASTN and DIAMOND respectively.
+```
+extarctDarkContigs.sh ContigFileName Outprefix
+```
