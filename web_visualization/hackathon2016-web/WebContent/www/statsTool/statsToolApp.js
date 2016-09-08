@@ -5,6 +5,36 @@ statsToolApp.controller('statsToolCtrl',
   [ '$scope', '$http',
 function ($scope, $http) {
 
+	  $scope.svgWidth = 800;
+	  $scope.svgHeight = 800;
+	  
+	  $scope.svg = d3.select("svg");
+	  
+	  $scope.updateData = function(contigs) {
+		
+		d3.selectAll("svg > *").remove();
+		  
+		var selection = 
+		  	$scope.svg
+		  	.selectAll("circle")
+		  	.data(contigs);
+		
+	  	selection.enter()
+		  	.append("circle")
+		  	.attr("cx", function(d) {return 5+(d.x * ($scope.svgWidth-10));})
+		  	.attr("cy", function(d) {return 5+(d.y * ($scope.svgHeight-10));})
+		  	.attr("r", 5)
+		  	.style("fill", function(d) {
+		  		if(d.isDark) 
+		  			{ return "red"; } 
+		  		else
+		  			{ return "green"; }
+		  	});
+	  	
+	  }
+	  
+	  $scope.updateData([]);
+	  	
 	  console.log("retrieving sequence metrics");
 	  $http.get("../../../hackathon2016/sequenceMetrics")
 	    .success(function(data, status, headers, config) {
@@ -69,6 +99,7 @@ function ($scope, $http) {
 		  $http.post("../../../hackathon2016/getContigs", requestObj)
 		  .success(function(data, status, headers, config) {
 			  console.info('success', data);
+			  $scope.updateData(data.contigs);
 		  })
 		  .error(function(data, status, headers, config) {
 			  console.info('error', data);

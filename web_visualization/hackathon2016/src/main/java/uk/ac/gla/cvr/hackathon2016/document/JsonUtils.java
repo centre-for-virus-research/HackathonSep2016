@@ -30,13 +30,14 @@ public class JsonUtils {
 
 	public static String prettyPrint(JsonObject jsonObject) {
 		Map<String, Boolean> config = Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, true);
-        JsonWriterFactory jwf = Json.createWriterFactory(config);
-        StringWriter sw = new StringWriter();
-        try (JsonWriter jsonWriter = jwf.createWriter(sw)) {
-            jsonWriter.writeObject(jsonObject);
-        }
-        return sw.toString();
-   }
+		JsonWriterFactory jwf = Json.createWriterFactory(config);
+		StringWriter sw = new StringWriter();
+		try (JsonWriter jsonWriter = jwf.createWriter(sw)) {
+			jsonWriter.writeObject(jsonObject);
+		}
+		return sw.toString();
+	}
+	
 
 	public static JsonObject stringToJsonObject(String string) {
 		return Json.createReader(new StringReader(string)).readObject();

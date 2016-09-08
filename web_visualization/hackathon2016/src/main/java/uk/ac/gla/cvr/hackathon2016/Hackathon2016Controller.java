@@ -1,5 +1,7 @@
 package uk.ac.gla.cvr.hackathon2016;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,7 +144,11 @@ public class Hackathon2016Controller {
 			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
 			
 			String sequenceId = ((JsonString) requestObj.get("sequenceId")).getString();
-
+			String xMetricString = ((JsonString) requestObj.get("xMetric")).getString();
+			SequenceMetric xMetric = SequenceMetric.valueOf(xMetricString);
+			String yMetricString = ((JsonString) requestObj.get("yMetric")).getString();
+			SequenceMetric yMetric = SequenceMetric.valueOf(yMetricString);
+			
 			ObjectContext objectContext = Hackathon2016Database.getInstance().getServerRuntime().getContext();
 			Expression exp = ExpressionFactory
 					.matchExp(MergeTable.SEQ_ID_PROPERTY, sequenceId);
@@ -151,13 +157,39 @@ public class Hackathon2016Controller {
 			List<MergeTable> mergeTableRecords = (List<MergeTable>) objectContext.performQuery(query);
 
 			JsonArrayBuilder arrayBuilder = JsonUtils.jsonArrayBuilder();
+			
+			List<ContigPoint> contigPoints = new ArrayList<ContigPoint>();
+			Double maxUnscaledX = null;
+			Double maxUnscaledY = null;
+			
 			for(MergeTable mergeTableRecord: mergeTableRecords) {
+				Double xPropertyVal = xMetric.mapToDouble(mergeTableRecord.readProperty(xMetric.getMergeTableProperty()));
+				Double yPropertyVal = yMetric.mapToDouble(mergeTableRecord.readProperty(yMetric.getMergeTableProperty()));
+				boolean isDark = determineIfDark(mergeTableRecord);
+				ContigPoint contigPoint = new ContigPoint();
+				contigPoint.contigId = mergeTableRecord.getContigID();
+				contigPoint.unscaledX = xPropertyVal;
+				if(maxUnscaledX == null || xPropertyVal > maxUnscaledX) {
+					maxUnscaledX = xPropertyVal;
+				}
+				contigPoint.unscaledY = yPropertyVal;
+				if(maxUnscaledY == null || yPropertyVal > maxUnscaledY) {
+					maxUnscaledY = yPropertyVal;
+				}
+				contigPoint.isDark = isDark;
+				contigPoints.add(contigPoint);
+			}
+			for(ContigPoint contigPoint: contigPoints) {
 				arrayBuilder.add(JsonUtils.jsonObjectBuilder()
-						.add("contigId", mergeTableRecord.getContigID())
-						.add("seqId", mergeTableRecord.getSeqID())
+						.add("contigId", contigPoint.contigId)
+						.add("x", contigPoint.unscaledX / maxUnscaledX)
+						.add("y", contigPoint.unscaledY / maxUnscaledY)
+						.add("isDark", contigPoint.isDark)
 						.build());
 			}
 			JsonObject result = JsonUtils.jsonObjectBuilder()
+					.add("xLabel", xMetric.getDescription())
+					.add("yLabel", yMetric.getDescription())
 					.add("contigs", arrayBuilder.build())
 					.build();
 
@@ -169,6 +201,25 @@ public class Hackathon2016Controller {
 			logger.log(Level.SEVERE, "Error during post: "+th.getMessage(), th);
 			throw th;
 		} 
+	}
+
+	private class ContigPoint {
+		String contigId;
+		double unscaledX;
+		double unscaledY;
+		boolean isDark;
+	}
+	
+	private boolean determineIfDark(MergeTable mergeTableRecord) {
+		boolean isDark = true;
+		if(mergeTableRecord.getAdaptorSubjectId() != null) {
+			isDark = false;
+		} else if(mergeTableRecord.getBlastSubjectId() != null) {
+			isDark = false;
+		} else if(mergeTableRecord.getDiamondSubjectId() != null) {
+			isDark = false;
+		}
+		return isDark;
 	} 
 
 	
