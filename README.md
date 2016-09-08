@@ -77,3 +77,25 @@ java -jar RandomVirus.jar InputSequenFileName[string] NumberOfReads[int] ReadLen
 ```
 extarctDarkContigs.sh ContigFileName Outprefix
 ```
+
+**Scripts to process and add data to the database**
+
+To add to Sample table 
+```
+AddToSample-v1.sh sample-1.txt
+```
+
+To add to Sequence table 
+```
+AddToSequence-v1.sh sequence-1.txt
+```
+
+To add to Analysis table 
+```
+AddToAnalysis-v1.sh analysis-1.txt
+```
+
+To add to MergeContigs and KnownDark tables 
+```
+AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
+```
