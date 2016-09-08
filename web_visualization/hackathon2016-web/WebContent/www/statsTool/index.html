@@ -44,20 +44,22 @@
 			ng-click="getContigs()"
 			ng-disabled="false">Retrieve contig data</button>
 		</p>
-		<p>
-		X metric:
-		<select ng-model="xMetric"
-				ng-options="metric.description for metric in sequenceMetrics">
-		</select>
-		</p>
-		<p>
-		Y metric:
-		<select ng-model="yMetric"
-				ng-options="metric.description for metric in sequenceMetrics">
-		</select>
-		</p>
-		
-		<svg ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}"></svg>
+		<div ng-show="contigs.length > 0">
+			<p>
+			X metric:
+			<select ng-model="xMetric"
+					ng-options="metric.description for metric in sequenceMetrics">
+			</select>
+			</p>
+			<p>
+			Y metric:
+			<select ng-model="yMetric"
+					ng-options="metric.description for metric in sequenceMetrics">
+			</select>
+			</p>
+			
+			<svg ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}"></svg>
+		</div>
 	</div>
 
 </div>

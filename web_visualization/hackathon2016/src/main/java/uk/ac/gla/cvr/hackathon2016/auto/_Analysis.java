@@ -15,10 +15,10 @@ public abstract class _Analysis extends CayenneDataObject {
     public static final String ANALYSIS_DATE_PROPERTY = "analysisDate";
     public static final String DENOVO_OPTIONS_PROPERTY = "denovoOptions";
     public static final String DENOVO_PROGRAM_PROPERTY = "denovoProgram";
-    public static final String KNOWN_GENOMES_IN_THE_SAMPLE_PROPERTY = "knownGenomesInTheSample";
+    public static final String KNONW_GENOMES_IN_THE_SAMPLE_PROPERTY = "knonwGenomesInTheSample";
     public static final String NOTES_PROPERTY = "notes";
     public static final String NR_VERSION_PROPERTY = "nrVersion";
-    public static final String NT_VERSION_PROPERTY = "ntVersion";
+    public static final String NT_VERSTION_PROPERTY = "ntVerstion";
     public static final String PROG_AND_OPTIONSFOR_NR_SEARCH_PROPERTY = "progAndOptionsforNrSearch";
     public static final String PROG_AND_OPTIONSFOR_NT_SEARCH_PROPERTY = "progAndOptionsforNtSearch";
     public static final String RESEARCHER_PROPERTY = "researcher";
@@ -47,11 +47,11 @@ public abstract class _Analysis extends CayenneDataObject {
         return (String)readProperty(DENOVO_PROGRAM_PROPERTY);
     }
 
-    public void setKnownGenomesInTheSample(String knownGenomesInTheSample) {
-        writeProperty(KNOWN_GENOMES_IN_THE_SAMPLE_PROPERTY, knownGenomesInTheSample);
+    public void setKnonwGenomesInTheSample(String knonwGenomesInTheSample) {
+        writeProperty(KNONW_GENOMES_IN_THE_SAMPLE_PROPERTY, knonwGenomesInTheSample);
     }
-    public String getKnownGenomesInTheSample() {
-        return (String)readProperty(KNOWN_GENOMES_IN_THE_SAMPLE_PROPERTY);
+    public String getKnonwGenomesInTheSample() {
+        return (String)readProperty(KNONW_GENOMES_IN_THE_SAMPLE_PROPERTY);
     }
 
     public void setNotes(String notes) {
@@ -68,11 +68,11 @@ public abstract class _Analysis extends CayenneDataObject {
         return (String)readProperty(NR_VERSION_PROPERTY);
     }
 
-    public void setNtVersion(String ntVersion) {
-        writeProperty(NT_VERSION_PROPERTY, ntVersion);
+    public void setNtVerstion(String ntVerstion) {
+        writeProperty(NT_VERSTION_PROPERTY, ntVerstion);
     }
-    public String getNtVersion() {
-        return (String)readProperty(NT_VERSION_PROPERTY);
+    public String getNtVerstion() {
+        return (String)readProperty(NT_VERSTION_PROPERTY);
     }
 
     public void setProgAndOptionsforNrSearch(String progAndOptionsforNrSearch) {

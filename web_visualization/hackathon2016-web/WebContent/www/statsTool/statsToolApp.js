@@ -5,8 +5,8 @@ statsToolApp.controller('statsToolCtrl',
   [ '$scope', '$http',
 function ($scope, $http) {
 
-	  $scope.svgWidth = 800;
-	  $scope.svgHeight = 800;
+	  $scope.svgWidth = 600;
+	  $scope.svgHeight = 600;
 	  
 	  $scope.svg = d3.select("svg");
 	  $scope.contigs = [];
@@ -22,11 +22,20 @@ function ($scope, $http) {
 			return;
 		}
 		
+		d3.select("svg")
+			.append("rect")
+			.attr("width", $scope.svgWidth)
+			.attr("height", $scope.svgHeight)
+			.style("stroke", "black")
+			.style("fill", "white");
+		
 		var xMetricProperty = $scope.xMetric.property;
 		var yMetricProperty = $scope.yMetric.property;
 		
 		console.log("xMetricProperty: ", xMetricProperty);
 		console.log("yMetricProperty: ", yMetricProperty);
+		
+		var darkFill = function(d) {return d.isDark ? "#91e6e9" : "#e99491"};
 		
 		var selection = 
 		  	$scope.svg
@@ -42,12 +51,11 @@ function ($scope, $http) {
 		  		return 10+((1.0-d[yMetricProperty]) * ($scope.svgHeight-20));
 		  	})
 		  	.attr("r", 5)
-		  	.style("fill", function(d) {
-		  		if(d.isDark) 
-		  			{ return "red"; } 
-		  		else
-		  			{ return "green"; }
-		  	});
+		  	.style("fill", darkFill)
+		  	.style("stroke", "black")
+		  	.on("mouseover", function(){d3.select(this).style("fill", "black");})
+		  	.on("mouseout", function(){d3.select(this).style("fill", darkFill);})
+        ;
 	  	
 	  }
 	  

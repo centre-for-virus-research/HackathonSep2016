@@ -60,7 +60,7 @@ public abstract class _MergeTable extends CayenneDataObject {
     public static final String SEQ_PROPERTY = "seq";
     public static final String SEQ_ID_PROPERTY = "seqID";
 
-    public static final String CONTIG_ID_PK_COLUMN = "ContigID";
+    public static final String CONTIG_ID_PK_COLUMN = "contigID";
 
     public void setAdaptorAlnLength(Integer adaptorAlnLength) {
         writeProperty(ADAPTOR_ALN_LENGTH_PROPERTY, adaptorAlnLength);

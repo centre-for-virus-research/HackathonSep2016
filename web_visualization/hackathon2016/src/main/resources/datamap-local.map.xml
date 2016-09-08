@@ -8,26 +8,38 @@
 		<db-attribute name="analysisDate" type="DATE" length="10"/>
 		<db-attribute name="denovoOptions" type="VARCHAR" length="100"/>
 		<db-attribute name="denovoProgram" type="VARCHAR" length="100"/>
-		<db-attribute name="knownGenomesInTheSample" type="VARCHAR" length="100"/>
+		<db-attribute name="knonwGenomesInTheSample" type="LONGVARCHAR" length="65535"/>
 		<db-attribute name="notes" type="LONGVARCHAR" length="65535"/>
 		<db-attribute name="nrVersion" type="VARCHAR" length="50"/>
-		<db-attribute name="ntVersion" type="VARCHAR" length="100"/>
+		<db-attribute name="ntVerstion" type="VARCHAR" length="50"/>
 		<db-attribute name="progAndOptionsforNrSearch" type="VARCHAR" length="100"/>
 		<db-attribute name="progAndOptionsforNtSearch" type="VARCHAR" length="100"/>
 		<db-attribute name="researcher" type="VARCHAR" length="100"/>
 		<db-attribute name="seqID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
 	</db-entity>
+	<db-entity name="KnownDark" catalog="Hack">
+		<db-attribute name="alnLength" type="INTEGER" length="10"/>
+		<db-attribute name="bitScore" type="REAL" length="12"/>
+		<db-attribute name="contigEnd" type="INTEGER" length="10"/>
+		<db-attribute name="contigID" type="VARCHAR" length="100"/>
+		<db-attribute name="contigStart" type="INTEGER" length="10"/>
+		<db-attribute name="eVal" type="REAL" length="12"/>
+		<db-attribute name="gapOpenCount" type="INTEGER" length="10"/>
+		<db-attribute name="mismatchCount" type="INTEGER" length="10"/>
+		<db-attribute name="percIdentity" type="REAL" length="12"/>
+		<db-attribute name="queryEnd" type="INTEGER" length="10"/>
+		<db-attribute name="queryID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
+		<db-attribute name="queryStart" type="INTEGER" length="10"/>
+	</db-entity>
 	<db-entity name="MergeTable" catalog="Hack">
 		<db-attribute name="AverageDepth" type="REAL" length="12"/>
 		<db-attribute name="Breadth" type="INTEGER" length="10"/>
-		<db-attribute name="ContigID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
 		<db-attribute name="MappedReads" type="INTEGER" length="10"/>
 		<db-attribute name="MaxDepth" type="INTEGER" length="10"/>
 		<db-attribute name="MinDepth" type="INTEGER" length="10"/>
 		<db-attribute name="PercentCovered" type="REAL" length="12"/>
 		<db-attribute name="RefLength" type="INTEGER" length="10"/>
 		<db-attribute name="Seq" type="LONGVARCHAR" length="65535"/>
-		<db-attribute name="SeqID" type="VARCHAR" length="100"/>
 		<db-attribute name="adaptor_alnLength" type="INTEGER" length="10"/>
 		<db-attribute name="adaptor_bitScore" type="REAL" length="12"/>
 		<db-attribute name="adaptor_eVal" type="REAL" length="12"/>
@@ -51,6 +63,7 @@
 		<db-attribute name="blast_subjectId" type="VARCHAR" length="100"/>
 		<db-attribute name="blast_subjectStart" type="INTEGER" length="10"/>
 		<db-attribute name="ce" type="REAL" length="12"/>
+		<db-attribute name="contigID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="100"/>
 		<db-attribute name="cpg" type="REAL" length="12"/>
 		<db-attribute name="cwf" type="REAL" length="12"/>
 		<db-attribute name="cz" type="REAL" length="12"/>
@@ -67,6 +80,7 @@
 		<db-attribute name="diamond_subjectStart" type="INTEGER" length="10"/>
 		<db-attribute name="gc" type="REAL" length="12"/>
 		<db-attribute name="gcs" type="REAL" length="12"/>
+		<db-attribute name="seqID" type="VARCHAR" length="100"/>
 	</db-entity>
 	<db-entity name="Sample" catalog="Hack">
 		<db-attribute name="collectionDate" type="DATE" length="10"/>
@@ -87,14 +101,28 @@
 		<obj-attribute name="analysisDate" type="java.util.Date" db-attribute-path="analysisDate"/>
 		<obj-attribute name="denovoOptions" type="java.lang.String" db-attribute-path="denovoOptions"/>
 		<obj-attribute name="denovoProgram" type="java.lang.String" db-attribute-path="denovoProgram"/>
-		<obj-attribute name="knownGenomesInTheSample" type="java.lang.String" db-attribute-path="knownGenomesInTheSample"/>
+		<obj-attribute name="knonwGenomesInTheSample" type="java.lang.String" db-attribute-path="knonwGenomesInTheSample"/>
 		<obj-attribute name="notes" type="java.lang.String" db-attribute-path="notes"/>
 		<obj-attribute name="nrVersion" type="java.lang.String" db-attribute-path="nrVersion"/>
-		<obj-attribute name="ntVersion" type="java.lang.String" db-attribute-path="ntVersion"/>
+		<obj-attribute name="ntVerstion" type="java.lang.String" db-attribute-path="ntVerstion"/>
 		<obj-attribute name="progAndOptionsforNrSearch" type="java.lang.String" db-attribute-path="progAndOptionsforNrSearch"/>
 		<obj-attribute name="progAndOptionsforNtSearch" type="java.lang.String" db-attribute-path="progAndOptionsforNtSearch"/>
 		<obj-attribute name="researcher" type="java.lang.String" db-attribute-path="researcher"/>
 		<obj-attribute name="seqID" type="java.lang.String" db-attribute-path="seqID"/>
+	</obj-entity>
+	<obj-entity name="KnownDark" className="uk.ac.gla.cvr.hackathon2016.data.KnownDark" dbEntityName="KnownDark">
+		<obj-attribute name="alnLength" type="java.lang.Integer" db-attribute-path="alnLength"/>
+		<obj-attribute name="bitScore" type="java.lang.Float" db-attribute-path="bitScore"/>
+		<obj-attribute name="contigEnd" type="java.lang.Integer" db-attribute-path="contigEnd"/>
+		<obj-attribute name="contigID" type="java.lang.String" db-attribute-path="contigID"/>
+		<obj-attribute name="contigStart" type="java.lang.Integer" db-attribute-path="contigStart"/>
+		<obj-attribute name="eVal" type="java.lang.Float" db-attribute-path="eVal"/>
+		<obj-attribute name="gapOpenCount" type="java.lang.Integer" db-attribute-path="gapOpenCount"/>
+		<obj-attribute name="mismatchCount" type="java.lang.Integer" db-attribute-path="mismatchCount"/>
+		<obj-attribute name="percIdentity" type="java.lang.Float" db-attribute-path="percIdentity"/>
+		<obj-attribute name="queryEnd" type="java.lang.Integer" db-attribute-path="queryEnd"/>
+		<obj-attribute name="queryID" type="java.lang.String" db-attribute-path="queryID"/>
+		<obj-attribute name="queryStart" type="java.lang.Integer" db-attribute-path="queryStart"/>
 	</obj-entity>
 	<obj-entity name="MergeTable" className="uk.ac.gla.cvr.hackathon2016.data.MergeTable" dbEntityName="MergeTable">
 		<obj-attribute name="adaptorAlnLength" type="java.lang.Integer" db-attribute-path="adaptor_alnLength"/>
@@ -122,7 +150,7 @@
 		<obj-attribute name="blastSubjectStart" type="java.lang.Integer" db-attribute-path="blast_subjectStart"/>
 		<obj-attribute name="breadth" type="java.lang.Integer" db-attribute-path="Breadth"/>
 		<obj-attribute name="ce" type="java.lang.Float" db-attribute-path="ce"/>
-		<obj-attribute name="contigID" type="java.lang.String" db-attribute-path="ContigID"/>
+		<obj-attribute name="contigID" type="java.lang.String" db-attribute-path="contigID"/>
 		<obj-attribute name="cpg" type="java.lang.Float" db-attribute-path="cpg"/>
 		<obj-attribute name="cwf" type="java.lang.Float" db-attribute-path="cwf"/>
 		<obj-attribute name="cz" type="java.lang.Float" db-attribute-path="cz"/>
@@ -145,7 +173,7 @@
 		<obj-attribute name="percentCovered" type="java.lang.Float" db-attribute-path="PercentCovered"/>
 		<obj-attribute name="refLength" type="java.lang.Integer" db-attribute-path="RefLength"/>
 		<obj-attribute name="seq" type="java.lang.String" db-attribute-path="Seq"/>
-		<obj-attribute name="seqID" type="java.lang.String" db-attribute-path="SeqID"/>
+		<obj-attribute name="seqID" type="java.lang.String" db-attribute-path="seqID"/>
 	</obj-entity>
 	<obj-entity name="Sample" className="uk.ac.gla.cvr.hackathon2016.data.Sample" dbEntityName="Sample">
 		<obj-attribute name="collectionDate" type="java.util.Date" db-attribute-path="collectionDate"/>
