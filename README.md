@@ -8,7 +8,7 @@ consolodiated using GARM.
 
 
 ## Scripts
-**contigs.php**: retrieves a contig, given its id, from the database and put it in fasta format file named as <contigID>.fasta
+**contigs.php**: retrieves a contig, given its id, from the database and display it to the user
 e.g.:
 ```
 contigs.php contigID
@@ -50,17 +50,17 @@ The output is filename.complex where columns are tab delimited in the order of;
  
 seq is the header of the contigs/sequence;
 
-gc is the complexity of GC content of the sequence;
+gc is the complexity as measured by the GC content of the sequence;
 
-gcs is the complexity of GC-skew of the sequence;
+gcs is the complexity as measured by the GC-skew of the sequence;
 
-cpg is the complexity of CpG island content of the sequence;
+cpg is  the complexity as measured by CpG island content of the sequence;
 
-cwf is the complexity of Woottoon and Federhen value;
+cwf is the complexity as measured by Woottoon and Federhen value;
 
-ce is the complexity of Shannon Entropy;
+ce is  the complexity as measured by Shannon Entropy;
 
-cz is the complexity of compression factor using Gzip;
+cz is  the complexity as measured by compression factor using Gzip;
 
 **RandomDark.jar** Java program to randomly generate paired end DNA sequences in FASTQ format. User supplies the read length and number of reads to output. The default behaviour is to use equal probabilities (25%) for the ACGT bases and 0 probability for N bases, but the user can override these. An output stub filename needs to be provided, and stub_1.fastq and stub_2.fastq files will be written. The source code is in RandomDark.java
 ```
