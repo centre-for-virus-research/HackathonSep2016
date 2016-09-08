@@ -6,7 +6,14 @@ consolodiated using GARM.
 
 
 
+
 ## Scripts
+**contigs.php**: retrieves a contig, given its id, from the database and put it in fasta format file named as <contigID>.fasta
+e.g.:
+```
+contigs.php contigID
+```
+
 **ContigStats.pl**: perl script to process a bam file, provides sttistics about number 
 of reads mapping, coverage of contig, depth etc...
 e.g.: 
