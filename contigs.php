@@ -6,7 +6,7 @@ $dbname = "Hack";
 
 $id=$argv[1];
 //$id ="midge1-0167e2:idba.genome1_contig-121_1027";
-
+echo "id: " . $id . "\n";
 
 // Create connection
 
@@ -28,6 +28,7 @@ if (mysqli_num_rows($result) > 0) {
     echo "0 results\n";
 }
 
+echo "Done\n";
 mysqli_close($conn);
 
 
