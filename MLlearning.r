@@ -15,6 +15,14 @@ registerDoParallel(cl)
 tuned <- best.tune(svm, darklight~ ., data = trainset, kernel = "radial")
 model <- svm( darklight~., data = trainset, kernel = "radial", gamma = tuned $gamma, cost = tuned $cost)
 stopCluster(cl)
+jpeg(file="SVMclassification.jpg")
+plot( model , trainset , gcs~gc)
+library(corrplot)
+datMy.scale<- scale(trainset[2:ncol(trainset)],center=TRUE,scale=TRUE);
+corMatMy <- cor(datMy.scale);
+jpeg(file="FeatureCorrleation.jpg")
+corrplot(corMatMy, order = "hclust")
+#visualize the matrix, clustering feature
 prediction <- predict(model, testset)  
 write.csv(model$SV, file="model_SV.csv")
 write.csv(prediction, file="predict_result.csv")
