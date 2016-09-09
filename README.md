@@ -136,6 +136,9 @@ TODO:
 
 2. Integrate Maha's php script for fetching the sequence
 
+3. Add option to query a specific sample
+
+
 **MDSplot.r** is an R script to retrieve the different statistis and produce and MDS plot 
 of the dark contigs. It is run in a similar wayas PCAplot.r
 ```
