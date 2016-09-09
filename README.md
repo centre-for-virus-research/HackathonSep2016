@@ -73,6 +73,8 @@ java -jar RandomVirus.jar InputSequenFileName[string] NumberOfReads[int] ReadLen
 
 ```
 **extarctDarkContigs.sh** and **DarkContigs.sql** Bash and SQL script to extract current dark sequences from the database and re-run classification using latest version of the nt and nr DB using BLASTN and DIAMOND respectively.
+TODO: 
+1. This script needs to be updated to update the records in MySQL if the sequences are re-classified.
 ```
 extarctDarkContigs.sh ContigFileName Outprefix
 ```
@@ -148,6 +150,10 @@ TODO:
 
 1. Improve the clicking for fetching the sequence
 
+**clustering.sh** is  bash script to carry out the cluster analysis for dark contigs using cd-hit.
+```
+clustering.sh DarkContigFile.fa IdentityThreshold(e.g. 0.9) Outprefix
+```
 
 
 
