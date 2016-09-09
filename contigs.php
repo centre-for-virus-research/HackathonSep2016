@@ -1,35 +1,55 @@
 <?php
+ini_set('error_reporting', E_ALL|E_STRICT);
+ini_set('display_errors', 1);
+
+
+function GET($key) {
+    return isset($_GET[$key]) ? $_GET[$key] : null;
+}
+
 $servername = "localhost";
 $username = "hack";
 $password = "HackCVR16";
 $dbname = "Hack";
 
-$id=$argv[1];
+$idTrimmed=trim($_GET['id']);
+//echo "contigID :" . $idTrimmed . "<br/>";
+
 //$id ="midge1-0167e2:idba.genome1_contig-121_1027";
-echo "id: " . $id . "\n";
 
 // Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
 // Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+//echo "Connected successfully <br> ";
 
-$sql = "SELECT ContigID , Seq  FROM MergeTable WHERE ContigID = '$id'";
-$result = mysqli_query($conn, $sql);
+
+//query database 
+$query = "SELECT ContigID, Seq
+          FROM MergeTable
+          WHERE ContigID = '".$idTrimmed."'";          
+
+$result = mysqli_query($conn, $query);
+
+if(! $result )
+{
+  die('Could not get data: ' . mysql_error());
+}
 
 if (mysqli_num_rows($result) > 0) {
     // output data of each row
     while($row = mysqli_fetch_assoc($result)) {
-        echo ">" . $row["ContigID"]. "\n" . $row["Seq"].  "\n";            
+        // format result as fasta format
+        echo ">{$row['ContigID']}  <br> ".
+         "{$row['Seq']} <br> ";
     }
 } else {
-    echo "0 results\n";
+    echo "0 results <br>";
 }
 
-echo "Done\n";
 mysqli_close($conn);
-
 
 ?>
