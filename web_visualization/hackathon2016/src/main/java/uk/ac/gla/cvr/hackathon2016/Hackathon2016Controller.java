@@ -366,8 +366,11 @@ public class Hackathon2016Controller {
 		
 		JsonObjectBuilder propertiesObjBuilder = JsonUtils.jsonObjectBuilder();
 		propertiesObjBuilder.add("contigId", contig.getContigID());
+		propertiesObjBuilder.add("mappedReads", contig.getMappedReads());
+		propertiesObjBuilder.add("contigLength", contig.getRefLength());
 		propertiesObjBuilder.add("sequence", contig.getSeq());
 		propertiesObjBuilder.add("sequenceId", sequence.getSeqID());
+		propertiesObjBuilder.add("sampleSource", sample.getSource());
 		propertiesObjBuilder.add("sampleSource", sample.getSource());
 		return propertiesObjBuilder.build();
 	}
