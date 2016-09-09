@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonNumber;
@@ -26,12 +25,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.SelectQuery;
-
 
 import uk.ac.gla.cvr.hackathon2016.data.KnownDark;
 import uk.ac.gla.cvr.hackathon2016.data.MergeTable;
@@ -262,11 +259,16 @@ public class Hackathon2016Controller {
 		return propertiesObjBuilder.build();
 	}
 
-	private JsonObject propertyLinkObj(String description, String value, String link) {
+	private JsonObject propertyLinkObj(String description, String value, String linkType, String... linkValues) {
 		JsonObjectBuilder propertiesObjBuilder = JsonUtils.jsonObjectBuilder();
 		propertiesObjBuilder.add("description", description);
 		propertiesObjBuilder.add("value", value);
-		propertiesObjBuilder.add("link", link);
+		propertiesObjBuilder.add("linkType", linkType);
+		JsonArrayBuilder valuesArrayBuilder = JsonUtils.jsonArrayBuilder();
+		for(String linkValue: linkValues) {
+			valuesArrayBuilder.add(linkValue);
+		}
+		propertiesObjBuilder.add("linkValue", valuesArrayBuilder.build());
 		return propertiesObjBuilder.build();
 	}
 
@@ -287,7 +289,7 @@ public class Hackathon2016Controller {
 					propertyDoubleObj(metric.getDescription(), metric.mapToDouble(propertyValObj)));
 		}
 		if(isDark) {
-			Set<String> relatedDarkContigs = new LinkedHashSet<String>();
+			Set<KnownDark> relatedDarkContigs = new LinkedHashSet<KnownDark>();
 
 			{
 				Expression exp = ExpressionFactory
@@ -295,7 +297,7 @@ public class Hackathon2016Controller {
 				SelectQuery query = new SelectQuery(KnownDark.class, exp);
 				@SuppressWarnings("unchecked")
 				List<KnownDark> knownDarkRecords = (List<KnownDark>) objectContext.performQuery(query);
-				knownDarkRecords.forEach(kdr -> relatedDarkContigs.add(kdr.getContigID()));
+				knownDarkRecords.forEach(kdr -> relatedDarkContigs.add(kdr));
 			}
 
 			{
@@ -304,27 +306,35 @@ public class Hackathon2016Controller {
 				SelectQuery query = new SelectQuery(KnownDark.class, exp);
 				@SuppressWarnings("unchecked")
 				List<KnownDark> knownDarkRecords = (List<KnownDark>) objectContext.performQuery(query);
-				knownDarkRecords.forEach(kdr -> relatedDarkContigs.add(kdr.getQueryID()));
+				knownDarkRecords.forEach(kdr -> relatedDarkContigs.add(kdr));
 			}
 			
-			relatedDarkContigs.forEach(rdc -> 
-				propertiesArrayBuilder.add(propertyStringObj("Related dark contig", rdc)));
+			relatedDarkContigs.forEach(rdc -> {
+				String otherContigId;
+				if(rdc.getQueryID().equals(resultContig.getContigID())) {
+					otherContigId = rdc.getContigID();
+				} else {
+					otherContigId = rdc.getQueryID();
+				}
+				propertiesArrayBuilder.add(
+						propertyLinkObj("Related dark contig", otherContigId, "relatedDark", rdc.getQueryID(), otherContigId));
+			});
 
 		}
 		Optional.ofNullable(resultContig.getAdaptorSubjectId())
 		.ifPresent(s -> {
 			String accession = idToAccession(s);
-			propertiesArrayBuilder.add(propertyLinkObj("Adapter sequence match", accession, "http://www.ncbi.nlm.nih.gov/nuccore/"+accession));
+			propertiesArrayBuilder.add(propertyLinkObj("Adapter sequence match", accession, "href", "http://www.ncbi.nlm.nih.gov/nuccore/"+accession));
 		});
 		Optional.ofNullable(resultContig.getBlastSubjectId())
 		.ifPresent(s -> {
 			String accession = idToAccession(s);
-			propertiesArrayBuilder.add(propertyLinkObj("Nucleotide sequence match", accession, "http://www.ncbi.nlm.nih.gov/nuccore/"+accession));
+			propertiesArrayBuilder.add(propertyLinkObj("Nucleotide sequence match", accession, "href", "http://www.ncbi.nlm.nih.gov/nuccore/"+accession));
 		});
 		Optional.ofNullable(resultContig.getDiamondSubjectId())
 		.ifPresent(s -> {
 			String accession = idToAccession(s);
-			propertiesArrayBuilder.add(propertyLinkObj("Protein sequence match", accession, "http://www.ncbi.nlm.nih.gov/protein/"+accession));
+			propertiesArrayBuilder.add(propertyLinkObj("Protein sequence match", accession, "href", "http://www.ncbi.nlm.nih.gov/protein/"+accession));
 		});
 		propertiesArrayBuilder.add(propertyStringObj("Sequence", resultContig.getSeq()));
 		return propertiesArrayBuilder.build();

@@ -190,7 +190,10 @@ function ($scope, $http) {
 		  });
 	  }
 
-	  
+	  $scope.showRelatedDark = function(knownDarkContigId, otherContigId) {
+		  console.log("knownDarkContigId", knownDarkContigId);
+		  console.log("otherContigId", otherContigId);
+	  }
 	  
   } ]);
 

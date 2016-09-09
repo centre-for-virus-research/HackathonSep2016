@@ -68,10 +68,19 @@
 						</thead>
 						<tr ng-repeat="prop in contigDetails.properties track by $index">
 							<td><b>{{prop.description}}</b></td>
-							<td ng-if="prop.link != null">
-								<a href="{{prop.link}}" target="_blank">{{prop.value}}</a>
+							<td>
+								<div ng-switch="prop.linkType">
+									<div ng-switch-when="href">
+										<a href="{{prop.linkValue[0]}}" target="_blank"}}>{{prop.value}}</a>
+									</div>
+									<div ng-switch-when="relatedDark">
+										<a ng-click="showRelatedDark(prop.linkValue[0], prop.linkValue[1])">{{prop.value}}</a>
+									</div>
+									<div ng-switch-default>
+										{{prop.value}}
+									</div>
+								</div>
 							</td>
-							<td ng-if="prop.link == null">{{prop.value}}</td>
 						</tr>
 					</table>
 			    </div>
