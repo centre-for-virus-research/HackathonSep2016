@@ -1,0 +1,89 @@
+<div class="modal-header">
+	<h3 class="modal-title">Match between dark contigs</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-md-4">
+			<h4>Match details</h4>
+			<table class="table table-striped table-bordered"
+				style="table-layout: fixed; word-wrap: break-word;">
+				<thead>
+				<col width="50%"></col>
+				<col width="50%"></col>
+				</thead>
+				<tbody>
+					<tr>
+						<td><b>Alignment length</b></td>
+						<td>{{data.alignmentLength}}</td>
+					</tr>
+					<tr>
+						<td><b>Nucleotide identity</b></td>
+						<td>{{data.percentIdentity}} %</td>
+					</tr>
+					<tr>
+						<td><b>Mismatch count</b></td>
+						<td>{{data.mismatchCount}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-8">
+			<h4>Reference contig</h4>
+			<table class="table table-striped table-bordered"
+				style="table-layout: fixed; word-wrap: break-word;">
+				<thead>
+				<col width="28%"></col>
+				<col width="72%"></col>
+				</thead>
+				<tbody>
+					<tr>
+						<td><b>Sample</b></td>
+						<td>{{data.reference.sampleSource}}</td>
+					</tr>
+					<tr>
+						<td><b>Sequencing run</b></td>
+						<td>{{data.reference.sequenceId}}</td>
+					</tr>
+					<tr>
+						<td><b>Contig ID</b></td>
+						<td>{{data.reference.contigId}}</td>
+					</tr>
+					<tr>
+						<td><b>Sequence</b></td>
+						<td>{{data.reference.sequence}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<h4>Query contig</h4>
+			<table class="table table-striped table-bordered"
+				style="table-layout: fixed; word-wrap: break-word;">
+				<thead>
+				<col width="28%"></col>
+				<col width="72%"></col>
+				</thead>
+				<tbody>
+					<tr>
+						<td><b>Sample</b></td>
+						<td>{{data.query.sampleSource}}</td>
+					</tr>
+					<tr>
+						<td><b>Sequencing run</b></td>
+						<td>{{data.query.sequenceId}}</td>
+					</tr>
+					<tr>
+						<td><b>Contig ID</b></td>
+						<td>{{data.query.contigId}}</td>
+					</tr>
+					<tr>
+						<td><b>Sequence</b></td>
+						<td>{{data.query.sequence}}</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-primary" ng-click="close()">OK</button>
+</div>

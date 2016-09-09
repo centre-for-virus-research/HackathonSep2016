@@ -15,6 +15,7 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -30,6 +31,7 @@ import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.SelectQuery;
 
+import uk.ac.gla.cvr.hackathon2016.data.Analysis;
 import uk.ac.gla.cvr.hackathon2016.data.KnownDark;
 import uk.ac.gla.cvr.hackathon2016.data.MergeTable;
 import uk.ac.gla.cvr.hackathon2016.data.Sample;
@@ -226,12 +228,7 @@ public class Hackathon2016Controller {
 			
 			ObjectContext objectContext = 
 					Hackathon2016Database.getInstance().getServerRuntime().getContext();
-			Expression exp = ExpressionFactory
-					.matchExp(MergeTable.CONTIG_ID_PROPERTY, contigId);
-			SelectQuery query = new SelectQuery(MergeTable.class, exp);
-			List<MergeTable> mergeTableRecords = (List<MergeTable>) objectContext.performQuery(query);
-
-			MergeTable resultContig = mergeTableRecords.get(0);
+			MergeTable resultContig = lookupContig(contigId, objectContext);
 
 			JsonObjectBuilder contigObjBuilder = JsonUtils.jsonObjectBuilder();
 			boolean isDark = determineIfDark(resultContig);
@@ -250,6 +247,114 @@ public class Hackathon2016Controller {
 			logger.log(Level.SEVERE, "Error during post: "+th.getMessage(), th);
 			throw th;
 		} 
+	}
+	
+	private Sample lookupSample(Integer sampleId, ObjectContext objectContext) {
+		Expression exp = ExpressionFactory
+				.matchExp(Sample.SMP_ID_PROPERTY, sampleId);
+		SelectQuery query = new SelectQuery(Sample.class, exp);
+		@SuppressWarnings("unchecked")
+		List<Sample> samples = (List<Sample>) objectContext.performQuery(query);
+		return samples.get(0);
+	}
+
+	private KnownDark lookupKnownDark(String queryId, ObjectContext objectContext) {
+		Expression exp = ExpressionFactory
+				.matchExp(KnownDark.QUERY_ID_PROPERTY, queryId);
+		SelectQuery query = new SelectQuery(KnownDark.class, exp);
+		@SuppressWarnings("unchecked")
+		List<KnownDark> knownDarks = (List<KnownDark>) objectContext.performQuery(query);
+		return knownDarks.get(0);
+	}
+
+	
+	private Sequence lookupSequence(String sequenceId, ObjectContext objectContext) {
+		Expression exp = ExpressionFactory
+				.matchExp(Sequence.SEQ_ID_PROPERTY, sequenceId);
+		SelectQuery query = new SelectQuery(Sequence.class, exp);
+		@SuppressWarnings("unchecked")
+		List<Sequence> sequences = (List<Sequence>) objectContext.performQuery(query);
+		return sequences.get(0);
+	}
+
+	private Analysis lookupAnalysis(String sequenceId, ObjectContext objectContext) {
+		Expression exp = ExpressionFactory
+				.matchExp(Analysis.SEQ_ID_PROPERTY, sequenceId);
+		SelectQuery query = new SelectQuery(Analysis.class, exp);
+		@SuppressWarnings("unchecked")
+		List<Analysis> analyses = (List<Analysis>) objectContext.performQuery(query);
+		return analyses.get(0);
+	}
+
+	
+	
+	private MergeTable lookupContig(String contigId, ObjectContext objectContext) {
+		Expression exp = ExpressionFactory
+				.matchExp(MergeTable.CONTIG_ID_PROPERTY, contigId);
+		SelectQuery query = new SelectQuery(MergeTable.class, exp);
+		@SuppressWarnings("unchecked")
+		List<MergeTable> mergeTableRecords = (List<MergeTable>) objectContext.performQuery(query);
+		MergeTable resultContig = mergeTableRecords.get(0);
+		return resultContig;
+	}
+
+	
+	
+	@SuppressWarnings("unchecked")
+	@POST()
+	@Path("/getKnownDarkDetails")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getKnownDarkDetails(String commandString, @Context HttpServletResponse response) {
+		try {
+			System.out.println("Get known dark details for :"+commandString);
+
+			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
+			
+			String knownDarkQueryId = ((JsonString) requestObj.get("knownDarkQueryId")).getString();
+			String otherContigId = ((JsonString) requestObj.get("otherContigId")).getString();
+			
+			ObjectContext objectContext = 
+					Hackathon2016Database.getInstance().getServerRuntime().getContext();
+			KnownDark knownDark = lookupKnownDark(knownDarkQueryId, objectContext);
+
+			MergeTable referenceContig = lookupContig(knownDark.getContigID(), objectContext);
+			MergeTable queryContig = lookupContig(knownDark.getQueryID(), objectContext);
+			
+			JsonObjectBuilder resultObjBuilder = JsonUtils.jsonObjectBuilder();
+			
+			resultObjBuilder.add("alignmentLength", knownDark.getAlnLength());
+			resultObjBuilder.add("mismatchCount", knownDark.getMismatchCount());
+			resultObjBuilder.add("percentIdentity", SequenceMetric.floatToRoundedDouble(knownDark.getPercIdentity()));
+			
+			resultObjBuilder.add("reference", knownDarkContig(referenceContig, objectContext));
+			resultObjBuilder.add("query", knownDarkContig(queryContig, objectContext));
+			
+			JsonObject result = resultObjBuilder.build();
+
+			String commandResult = JsonUtils.prettyPrint(result);
+			System.out.println("commandResult: "+commandResult);
+			addCacheDisablingHeaders(response);
+			return commandResult;
+		} catch(Throwable th) {
+			logger.log(Level.SEVERE, "Error during post: "+th.getMessage(), th);
+			throw th;
+		} 
+	}
+
+	
+	
+	
+	private JsonObject knownDarkContig(MergeTable contig, ObjectContext objectContext) {
+		Sequence sequence = lookupSequence(contig.getSeqID(), objectContext);
+		Sample sample = lookupSample(sequence.getSmpID(), objectContext);
+		
+		JsonObjectBuilder propertiesObjBuilder = JsonUtils.jsonObjectBuilder();
+		propertiesObjBuilder.add("contigId", contig.getContigID());
+		propertiesObjBuilder.add("sequence", contig.getSeq());
+		propertiesObjBuilder.add("sequenceId", sequence.getSeqID());
+		propertiesObjBuilder.add("sampleSource", sample.getSource());
+		return propertiesObjBuilder.build();
 	}
 
 	private JsonObject propertyDoubleObj(String description, Double value) {

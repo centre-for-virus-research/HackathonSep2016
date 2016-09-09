@@ -1,9 +1,9 @@
-var statsToolApp = angular.module('statsToolApp', []);
+var statsToolApp = angular.module('statsToolApp', ['ui.bootstrap','dialogs.main']);
 
 
 statsToolApp.controller('statsToolCtrl', 
-  [ '$scope', '$http',
-function ($scope, $http) {
+  [ '$scope', '$http', 'dialogs',
+function ($scope, $http, dialogs) {
 
 	  $scope.svgWidth = 550;
 	  $scope.svgHeight = 550;
@@ -190,11 +190,41 @@ function ($scope, $http) {
 		  });
 	  }
 
-	  $scope.showRelatedDark = function(knownDarkContigId, otherContigId) {
-		  console.log("knownDarkContigId", knownDarkContigId);
-		  console.log("otherContigId", otherContigId);
+	  $scope.showRelatedDark = function(knownDarkQueryId, otherContigId) {
+		  var requestObj = {
+				  "knownDarkQueryId": knownDarkQueryId,
+				  "otherContigId": otherContigId
+		  };
+		  console.log("Retrieving knownDark details", requestObj);
+		  $http.post("../../../hackathon2016/getKnownDarkDetails", requestObj)
+		  .success(function(data, status, headers, config) {
+			  console.info('success', data);
+			  // pop up dialog
+	    		var dlg = dialogs.create("dialogs/displayKnownDark.html",
+	    				"displayKnownDarkCtrl", 
+	    				data, {});
+	    		dlg.result.then(function() {
+	    			// completion handler
+	    		}, function() {
+	    		    // Error handler
+	    		}).finally(function() {
+	    		    // Finally handler
+	    		});
+		  })
+		  .error(function(data, status, headers, config) {
+			  console.info('error', data);
+		  });
+
+		  
 	  }
 	  
-  } ]);
+  } ]).controller('displayKnownDarkCtrl',function($scope,$modalInstance,data){
+		$scope.data = data;
+		
+		$scope.close = function(){
+			$modalInstance.close($scope.data);
+		}; 
+
+	});;
 
 

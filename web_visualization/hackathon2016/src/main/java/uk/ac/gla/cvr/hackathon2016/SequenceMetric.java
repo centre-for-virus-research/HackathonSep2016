@@ -31,12 +31,16 @@ public enum SequenceMetric {
 
 	private SequenceMetric(String mergeTableProperty, String description) {
 		this(mergeTableProperty, description, obj -> { 
-			double unrounded = ((Float) obj).doubleValue();
-			BigDecimal bd = new BigDecimal(unrounded);
-			bd = bd.round(new MathContext(3));
-			return bd.doubleValue();
+			return floatToRoundedDouble(((Float) obj));
 		});
 		
+	}
+
+	public static Double floatToRoundedDouble(Float fl) {
+		double unrounded = fl.doubleValue();
+		BigDecimal bd = new BigDecimal(unrounded);
+		bd = bd.round(new MathContext(3));
+		return bd.doubleValue();
 	}
 
 	public String getDescription() {
