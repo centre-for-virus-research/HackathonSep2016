@@ -39,7 +39,7 @@
 		<db-attribute name="MinDepth" type="INTEGER" length="10"/>
 		<db-attribute name="PercentCovered" type="REAL" length="12"/>
 		<db-attribute name="RefLength" type="INTEGER" length="10"/>
-		<db-attribute name="Seq" type="LONGVARCHAR" length="65535"/>
+		<db-attribute name="Seq" type="LONGVARCHAR" length="16777215"/>
 		<db-attribute name="adaptor_alnLength" type="INTEGER" length="10"/>
 		<db-attribute name="adaptor_bitScore" type="REAL" length="12"/>
 		<db-attribute name="adaptor_eVal" type="REAL" length="12"/>
@@ -81,6 +81,16 @@
 		<db-attribute name="gc" type="REAL" length="12"/>
 		<db-attribute name="gcs" type="REAL" length="12"/>
 		<db-attribute name="seqID" type="VARCHAR" length="100"/>
+	</db-entity>
+	<db-entity name="ORF" catalog="Hack">
+		<db-attribute name="contigID" type="VARCHAR" isMandatory="true" length="100"/>
+		<db-attribute name="dir" type="VARCHAR" isMandatory="true" length="1"/>
+		<db-attribute name="len" type="INTEGER" isMandatory="true" length="10"/>
+		<db-attribute name="orfID" type="VARCHAR" isMandatory="true" length="100"/>
+		<db-attribute name="seq" type="LONGVARCHAR" isMandatory="true" length="16777215"/>
+		<db-attribute name="start" type="INTEGER" isMandatory="true" length="10"/>
+		<db-attribute name="stop" type="INTEGER" isMandatory="true" length="10"/>
+		<db-attribute name="uniqID" type="VARCHAR" isPrimaryKey="true" isMandatory="true" length="110"/>
 	</db-entity>
 	<db-entity name="Sample" catalog="Hack">
 		<db-attribute name="collectionDate" type="DATE" length="10"/>
@@ -174,6 +184,16 @@
 		<obj-attribute name="refLength" type="java.lang.Integer" db-attribute-path="RefLength"/>
 		<obj-attribute name="seq" type="java.lang.String" db-attribute-path="Seq"/>
 		<obj-attribute name="seqID" type="java.lang.String" db-attribute-path="seqID"/>
+	</obj-entity>
+	<obj-entity name="Orf" className="uk.ac.gla.cvr.hackathon2016.data.Orf" dbEntityName="ORF">
+		<obj-attribute name="contigID" type="java.lang.String" db-attribute-path="contigID"/>
+		<obj-attribute name="dir" type="java.lang.String" db-attribute-path="dir"/>
+		<obj-attribute name="len" type="java.lang.Integer" db-attribute-path="len"/>
+		<obj-attribute name="orfID" type="java.lang.String" db-attribute-path="orfID"/>
+		<obj-attribute name="seq" type="java.lang.String" db-attribute-path="seq"/>
+		<obj-attribute name="start" type="java.lang.Integer" db-attribute-path="start"/>
+		<obj-attribute name="stop" type="java.lang.Integer" db-attribute-path="stop"/>
+		<obj-attribute name="uniqID" type="java.lang.String" db-attribute-path="uniqID"/>
 	</obj-entity>
 	<obj-entity name="Sample" className="uk.ac.gla.cvr.hackathon2016.data.Sample" dbEntityName="Sample">
 		<obj-attribute name="collectionDate" type="java.util.Date" db-attribute-path="collectionDate"/>
