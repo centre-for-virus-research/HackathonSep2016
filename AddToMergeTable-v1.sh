@@ -16,7 +16,7 @@ Usage () {
 }
 
 # Check the command line options
-if [ $# -eq 3 ]; then Usage; exit 1; fi
+if [ $# -ne 2 ]; then Usage; exit 1; fi
 
 # Is the input file readble
 if [ ! -f $1 ]; then echo "File $1 not found"; Usage; exit 1; fi
