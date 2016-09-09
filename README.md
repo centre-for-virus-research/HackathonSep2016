@@ -131,7 +131,20 @@ The plot generated is in html format and used plotly to provide interactivity of
 Rscript PCAplot.r PCA3000.html 3000 *****
 ```
 TODO:
+
 1. Provide a means of pltting wither dark, light or both
+
 2. Integrate Maha's php script for fetching the sequence
+
+**MDSplot.r** is an R script to retrieve the different statistis and produce and MDS plot 
+of the dark contigs. It is run in a similar wayas PCAplot.r
+```
+Rscript MDSplot.r MDS3000.html 3000 *****
+```
+TODO:
+
+1. Improve the clicking for fetching the sequence
+
+
 
 
