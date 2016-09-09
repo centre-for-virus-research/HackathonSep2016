@@ -15,6 +15,6 @@ registerDoParallel(cl)
 tuned <- best.tune(svm, darklight~ ., data = trainset, kernel = "radial")
 model <- svm( darklight~., data = trainset, kernel = "radial", gamma = tuned $gamma, cost = tuned $cost)
 stopCluster(cl)
-prediction <- predict(model, testset)  #The -1 is because the label column to intance classes, V1, is in the first column
+prediction <- predict(model, testset)  
 write.csv(model$SV, file="model_SV.csv")
 write.csv(prediction, file="predict_result.csv")
