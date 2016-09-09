@@ -45,14 +45,20 @@ e.g.:
 ```
 perl profileComplexSeq1.pl <filename.fa>
 ```
-The output is filename.complex where columns are tab delimited in the order of
+The output is filename.complex where columns are tab delimited in the order of:
  
 seq is the header of the contigs/sequence;
+
 gc is the complexity as measured by the GC content of the sequence;
+
 gcs is the complexity as measured by the GC-skew of the sequence;
+
 cpg is  the complexity as measured by CpG island content of the sequence;
+
 cwf is the complexity as measured by Woottoon and Federhen value;
+
 ce is  the complexity as measured by Shannon Entropy;
+
 cz is  the complexity as measured by compression factor using Gzip;
 
 **RandomDark.jar** Java program to randomly generate paired end DNA sequences in FASTQ format. User supplies the read length and number of reads to output. The default behaviour is to use equal probabilities (25%) for the ACGT bases and 0 probability for N bases, but the user can override these. An output stub filename needs to be provided, and stub_1.fastq and stub_2.fastq files will be written. The source code is in RandomDark.java
@@ -97,7 +103,6 @@ AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
 **MLlearning.r**  is the R script to predict the class of the input contigs (e.g. dark or light)  based on machine learning (here SVM is used).
 ```
 Rscript MLlearning.r
-
 ```
 The run this R script, we need two inputs files in the same directory.
 (1) testdata.complex :
