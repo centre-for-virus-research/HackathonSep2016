@@ -100,28 +100,26 @@ AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
 ```
 
 
-**MLlearning.r**  is the R script to predict the class (i.e. dark or light) of the contigs from their complexity based on the machine learning. Here support vector machine (SVM) algorithm is used. e.g.:
+**PredictClassContig.sh**  is the bash script is to predict the class (i.e. dark or light) of the contigs from their complexity (e.g. GC content, entropy, etc.) based on the machine learning. Here support vector machine (SVM) algorithm. The training set is randomly selected 70,000 contigs with their complexity, the test set is randomly selected 30,000 contigs with their complexity.  usage:
 ```
-Rscript MLlearning.r
+PredictClassContig ContigFile.fa
 ```
-The run this R script, two datasets(Train set and Test set) should be copied in the same directory.
+The input file is the contigs to be predicted with FASTA format.
 
-(1) testdata.complex :
-The Output file of profileComplexSeq1.pl with the complexity (e.g. GC content, entropy, etc.) of contigs for testing.
-The header of the file: "ContigID gc gcs cpg cwf ce cz"
+There are five output files from this script:
 
-(2)traindata.txt :
-The gold standard TXT file for training the prediction engine with the complexity (e.g. GC content, entropy, etc.) of contigs.
-The format is almost same with testdata.complex but just with an extra column containing the class of contigs (i.e. dark or light).
-The header of the file: "ContigID darklight gc gcs cpg cwf ce cz".
+(1)model_SV.csv : The key contigs in training set with their corresponding attributes values (e.g. GC content, entropy, etc.) , which are support vectors for the machine learning and prediction;
 
-There are two output files from this R script:
+(2)predict_result.csv : The prediction results with the contig ID to be predicted and the corresponding predicted class of contigs (dark or light);
 
-(1)model_SV.csv :
-The key contigs with their corresponding attributes values (e.g. GC content, entropy, etc.) , which are support vectors for the machine learning and prediction.
+(3)FeatureCorrleation.jpg: The correlation plot among the attributes from the training dataset;
 
-(2)predict_result.csv :
-The prediction results with the contig ID and the corresponding predicted class of contigs (dark or light).
+(4)SVMclassification.jpg: The 2-D plots to show the SVM classification on the training set;
+
+(5) predict_accuracy.csv: The prediction accuracy  of test set based on the training set.
+
+
+
 
 **PCAplot.r** is an R script to retrieve the different statistics from the database and generate a principal component analysis plot of PC1 against PC2. 
 The plot generated is in html format and used plotly to provide interactivity of zooming in and out. To run the program, you need to provide
