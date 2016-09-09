@@ -142,7 +142,7 @@ function ($scope, $http, dialogs) {
 		  }
 		  console.log("retrieving sequences");
 		  $http.post("../../../hackathon2016/sequences", 
-				  {sampleId: $scope.currentSample.id})
+				  {sampleId: $scope.currentSample.ID})
 		    .success(function(data, status, headers, config) {
 				  console.info('success', data);
 				  $scope.sequences = data.sequences;
@@ -158,7 +158,7 @@ function ($scope, $http, dialogs) {
 	  
 	  $scope.getContigs = function() {
 		  var requestObj = {
-				  sequenceId: $scope.currentSequence.sequenceId
+				  sequenceId: $scope.currentSequence.ID
 		  };
 		  console.log("Retrieving contigs", requestObj);
 		  $http.post("../../../hackathon2016/getContigs", requestObj)
@@ -217,6 +217,28 @@ function ($scope, $http, dialogs) {
 
 		  
 	  }
+
+	  
+	  $scope.showSequencingRunDetails = function() {
+			  // pop up dialog
+	    		var dlg = dialogs.create("dialogs/displaySequencingRunDetails.html",
+	    				"displaySequencingRunDetailsCtrl", 
+	    				{
+	    					sample: $scope.currentSample,
+	    					sequence: $scope.currentSequence
+	    				}, {});
+	    		dlg.result.then(function() {
+	    			// completion handler
+	    		}, function() {
+	    		    // Error handler
+	    		}).finally(function() {
+	    		    // Finally handler
+	    		});
+		  
+	  }
+
+	  
+	  
 	  
   } ]).controller('displayKnownDarkCtrl',function($scope,$modalInstance,data){
 		$scope.data = data;
@@ -225,6 +247,13 @@ function ($scope, $http, dialogs) {
 			$modalInstance.close($scope.data);
 		}; 
 
-	});;
+	}).controller('displaySequencingRunDetailsCtrl',function($scope,$modalInstance,data){
+		$scope.data = data;
+		
+		$scope.close = function(){
+			$modalInstance.close($scope.data);
+		}; 
+
+	});
 
 

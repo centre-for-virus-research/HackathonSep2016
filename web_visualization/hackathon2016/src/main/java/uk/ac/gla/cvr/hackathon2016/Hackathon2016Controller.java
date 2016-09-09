@@ -1,5 +1,6 @@
 package uk.ac.gla.cvr.hackathon2016;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -74,10 +75,19 @@ public class Hackathon2016Controller {
 
 			JsonArrayBuilder arrayBuilder = JsonUtils.jsonArrayBuilder();
 			for(Sample sample: samples) {
-				arrayBuilder.add(JsonUtils.jsonObjectBuilder()
-						.add("id", sample.getSmpID())
-						.add("source", sample.getSource())
-						.build());
+				JsonObjectBuilder sampleObjBuilder = JsonUtils.jsonObjectBuilder();
+				
+				sampleObjBuilder.add("ID", sample.getSmpID());
+				sampleObjBuilder.add("Source", sample.getSource());
+				Optional.ofNullable(sample.getMetagenomics())
+				.ifPresent(s -> sampleObjBuilder.add("Is metagenomics?", s == 1 ? "Yes" : "No"));
+				Optional.ofNullable(sample.getHost())
+				.ifPresent(s -> sampleObjBuilder.add("Host", s));
+				Optional.ofNullable(sample.getOwner())
+				.ifPresent(s -> sampleObjBuilder.add("Owner", s));
+				Optional.ofNullable(sample.getCollectionDate())
+				.ifPresent(s -> sampleObjBuilder.add("Collection date", DateFormat.getDateInstance().format(s)));
+				arrayBuilder.add(sampleObjBuilder.build());
 			}
 			JsonObject result = JsonUtils.jsonObjectBuilder()
 					.add("samples", arrayBuilder.build())
@@ -115,11 +125,17 @@ public class Hackathon2016Controller {
 
 			JsonArrayBuilder arrayBuilder = JsonUtils.jsonArrayBuilder();
 			for(Sequence sequence: sequences) {
-				arrayBuilder.add(JsonUtils.jsonObjectBuilder()
-						.add("sequenceId", sequence.getSeqID())
-						.add("libPrep", sequence.getLibPrep())
-						.add("technology", sequence.getTechnology())
-						.add("seqType", sequence.getSeqType())
+				JsonObjectBuilder sequenceObjBuilder = JsonUtils.jsonObjectBuilder();
+				
+				sequenceObjBuilder.add("ID", sequence.getSeqID());
+				Optional.ofNullable(sequence.getLibPrep())
+				.ifPresent(s -> sequenceObjBuilder.add("Library prep.", s));
+				Optional.ofNullable(sequence.getTechnology())
+				.ifPresent(s -> sequenceObjBuilder.add("Sequencing technology", s));
+				Optional.ofNullable(sequence.getSeqType())
+				.ifPresent(s -> sequenceObjBuilder.add("Paired-/single-end", s == 2 ? "Paired-end" : "Single-end"));
+				
+				arrayBuilder.add(sequenceObjBuilder
 						.build());
 			}
 			JsonObject result = JsonUtils.jsonObjectBuilder()
@@ -312,7 +328,6 @@ public class Hackathon2016Controller {
 			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
 			
 			String knownDarkQueryId = ((JsonString) requestObj.get("knownDarkQueryId")).getString();
-			String otherContigId = ((JsonString) requestObj.get("otherContigId")).getString();
 			
 			ObjectContext objectContext = 
 					Hackathon2016Database.getInstance().getServerRuntime().getContext();

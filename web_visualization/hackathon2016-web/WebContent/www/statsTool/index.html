@@ -29,13 +29,16 @@
 		<p>
 		Sample:
 		<select ng-model="currentSample"
-				ng-options="sample.source for sample in samples">
+				ng-options="sample.Source for sample in samples">
 		</select>
 		Sequencing run:
 		<select ng-disable="!sequences"
 				ng-model="currentSequence"
-				ng-options="sequence.sequenceId for sequence in sequences">
+				ng-options="sequence.ID for sequence in sequences">
 		</select>
+		<button type="button" class="btn btn-primary btn-xs"
+			ng-click="showSequencingRunDetails()"
+			ng-disabled="false">Sequencing run details</button>
 		<button type="button" class="btn btn-primary btn-xs"
 			ng-click="getContigs()"
 			ng-disabled="false">Retrieve contig data</button>
