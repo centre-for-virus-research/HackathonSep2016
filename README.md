@@ -75,6 +75,7 @@ java -jar RandomVirus.jar InputSequenFileName[string] NumberOfReads[int] ReadLen
 **extarctDarkContigs.sh** and **DarkContigs.sql** Bash and SQL script to extract current dark sequences from the database and re-run classification using latest version of the nt and nr DB using BLASTN and DIAMOND respectively.
 TODO: 
 1. This script needs to be updated to update the records in MySQL if the sequences are re-classified.
+2. Add this script to cronjob to re-run the classification when newer versions of the DBs are available on the server.
 ```
 extarctDarkContigs.sh ContigFileName Outprefix
 ```
