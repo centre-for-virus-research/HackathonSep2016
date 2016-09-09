@@ -93,7 +93,7 @@ To add to MergeContigs and KnownDark tables
 AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
 ```
 
-```
+
 **MLlearning.r**  is the R script to predict the class of the input contigs (e.g. dark or light)  based on machine learning (here SVM is used).
 ```
 Rscript MLlearning.r
