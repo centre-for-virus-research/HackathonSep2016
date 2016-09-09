@@ -150,7 +150,7 @@ function ($scope, $http) {
 		  var requestObj = {
 				  sequenceId: $scope.currentSequence.sequenceId
 		  };
-		  console.log("Updating for request", requestObj);
+		  console.log("Retrieving contigs", requestObj);
 		  $http.post("../../../hackathon2016/getContigs", requestObj)
 		  .success(function(data, status, headers, config) {
 			  console.info('success', data);
@@ -165,7 +165,9 @@ function ($scope, $http) {
 	  
 	  $scope.getContigDetails = function(contigId) {
 		  var requestObj = {
-				  contigId: contigId
+				  contigId: contigId,
+				  xMetric: $scope.xMetric.property,
+				  yMetric: $scope.yMetric.property
 		  };
 		  console.log("Retrieving contig details", requestObj);
 		  $http.post("../../../hackathon2016/getContigDetails", requestObj)

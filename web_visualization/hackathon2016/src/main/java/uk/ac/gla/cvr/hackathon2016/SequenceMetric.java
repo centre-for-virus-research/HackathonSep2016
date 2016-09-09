@@ -1,8 +1,11 @@
 package uk.ac.gla.cvr.hackathon2016;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.function.Function;
 
 import uk.ac.gla.cvr.hackathon2016.data.MergeTable;
+
 
 public enum SequenceMetric {
 	gc(MergeTable.GC_PROPERTY, "GC content"),
@@ -27,7 +30,13 @@ public enum SequenceMetric {
 	}
 
 	private SequenceMetric(String mergeTableProperty, String description) {
-		this(mergeTableProperty, description, obj -> ((Float) obj).doubleValue());
+		this(mergeTableProperty, description, obj -> { 
+			double unrounded = ((Float) obj).doubleValue();
+			BigDecimal bd = new BigDecimal(unrounded);
+			bd = bd.round(new MathContext(3));
+			return bd.doubleValue();
+		});
+		
 	}
 
 	public String getDescription() {

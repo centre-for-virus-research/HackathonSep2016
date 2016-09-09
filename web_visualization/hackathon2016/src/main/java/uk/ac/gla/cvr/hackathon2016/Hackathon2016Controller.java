@@ -1,6 +1,8 @@
 package uk.ac.gla.cvr.hackathon2016;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -214,6 +216,10 @@ public class Hackathon2016Controller {
 			JsonObject requestObj = JsonUtils.stringToJsonObject(commandString);
 			
 			String contigId = ((JsonString) requestObj.get("contigId")).getString();
+			String xMetricString = ((JsonString) requestObj.get("xMetric")).getString();
+			SequenceMetric xMetric = SequenceMetric.valueOf(xMetricString);
+			String yMetricString = ((JsonString) requestObj.get("yMetric")).getString();
+			SequenceMetric yMetric = SequenceMetric.valueOf(yMetricString);
 			
 			ObjectContext objectContext = 
 					Hackathon2016Database.getInstance().getServerRuntime().getContext();
@@ -223,25 +229,14 @@ public class Hackathon2016Controller {
 			List<MergeTable> mergeTableRecords = (List<MergeTable>) objectContext.performQuery(query);
 
 			MergeTable resultContig = mergeTableRecords.get(0);
-			
+
 			JsonObjectBuilder contigObjBuilder = JsonUtils.jsonObjectBuilder();
+			contigObjBuilder.add("title", 
+					determineIfDark(resultContig) ? "Dark contig" : "Known contig");
 			contigObjBuilder.add("contigId", resultContig.getContigID());
-			contigObjBuilder.add("isDark", determineIfDark(resultContig));
 			
-			for(SequenceMetric metric: SequenceMetric.values()) {
-				Object propertyValObj = resultContig.readProperty(metric.getMergeTableProperty());
-				contigObjBuilder.add(metric.getDescription(), metric.mapToDouble(propertyValObj));
-			}
-
+			contigObjBuilder.add("properties", createPropertiesJsonObj(resultContig, xMetric, yMetric));
 			
-			Optional.ofNullable(resultContig.getAdaptorSubjectId())
-			.ifPresent(s -> contigObjBuilder.add("Adaptor subject ID", s));
-			Optional.ofNullable(resultContig.getBlastSubjectId())
-			.ifPresent(s -> contigObjBuilder.add("BLAST subject ID", s));
-			Optional.ofNullable(resultContig.getDiamondSubjectId())
-			.ifPresent(s -> contigObjBuilder.add("Diamond subject ID", s));
-			contigObjBuilder.add("Sequence", resultContig.getSeq());
-
 			JsonObject result = contigObjBuilder.build();
 
 			String commandResult = JsonUtils.prettyPrint(result);
@@ -254,7 +249,29 @@ public class Hackathon2016Controller {
 		} 
 	}
 
-	
+	private JsonObject createPropertiesJsonObj(MergeTable resultContig,
+			SequenceMetric xMetric, SequenceMetric yMetric) {
+		JsonObjectBuilder propertiesObjBuilder = JsonUtils.jsonObjectBuilder();
+		
+		for(SequenceMetric metric: new LinkedHashSet<SequenceMetric>(Arrays.asList(xMetric, yMetric, SequenceMetric.mappedReads, SequenceMetric.refLength))) {
+			Object propertyValObj = resultContig.readProperty(metric.getMergeTableProperty());
+			propertiesObjBuilder.add(metric.getDescription(), metric.mapToDouble(propertyValObj));
+		}
+		Optional.ofNullable(resultContig.getAdaptorSubjectId())
+		.ifPresent(s -> propertiesObjBuilder.add("Adapter sequence match", idToAccession(s)));
+		Optional.ofNullable(resultContig.getBlastSubjectId())
+		.ifPresent(s -> propertiesObjBuilder.add("Nucleotide match", idToAccession(s)));
+		Optional.ofNullable(resultContig.getDiamondSubjectId())
+		.ifPresent(s -> propertiesObjBuilder.add("Protein match", idToAccession(s)));
+		propertiesObjBuilder.add("Sequence", resultContig.getSeq());
+
+		JsonObject build = propertiesObjBuilder.build();
+		return build;
+	}
+
+	private String idToAccession(String s) {
+		return s.split("\\|")[3];
+	}
 	
 	
 	
