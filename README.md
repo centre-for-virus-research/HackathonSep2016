@@ -105,16 +105,21 @@ AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
 Rscript MLlearning.r
 ```
 The run this R script, we need two inputs files in the same directory.
+
 (1) testdata.complex :
 The Output file of profileComplexSeq1.pl with the complexity (e.g. GC content, entropy, etc.) of contigs for testing.
 The header of the file: "ContigID gc gcs cpg cwf ce cz"
-(2) traindata.txt :
+
+(2)traindata.txt :
 The gold standard TXT file for training the prediction engine with the complexity (e.g. GC content, entropy, etc.) of contigs.
 The format is almost same with testdata.complex but just with an extra column containing the class of contigs (i.e. dark or light).
 The header of the file: "ContigID darklight gc gcs cpg cwf ce cz".
+
 There are two output files:
+
 (1)model_SV.csv
 The key contigs with their corresponding attributes values (e.g. GC content, entropy, etc.) , which are support vectors for the machine learning and prediction.
+
 (2)predict_result.csv
 The prediction results with the contig ID and the corresponding predicted class of contigs (dark or light).
 
