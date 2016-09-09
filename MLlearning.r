@@ -1,0 +1,20 @@
+# Written by Quan to do Machine learning and dark seq prediction based on SVM
+dataset1 <- read.table('traindata.txt', head = T)
+dataset<-dataset1[,-1]
+rownames(dataset)<-dataset1[,1]
+dataset2 <- read.table('testdata.txt', head = T)
+testset<-dataset2[,-1]
+rownames(testset)<-dataset2[,1]
+library(e1071)
+index <- 1:nrow(dataset)
+testindex <- sample(index, trunc(length(index)*30/100))
+trainset <- dataset [-testindex,]
+library(doParallel)
+cl <- makeCluster(detectCores())
+registerDoParallel(cl)
+tuned <- best.tune(svm, darklight~ ., data = trainset, kernel = "radial")
+model <- svm( darklight~., data = trainset, kernel = "radial", gamma = tuned $gamma, cost = tuned $cost)
+stopCluster(cl)
+prediction <- predict(model, testset)  #The -1 is because the label column to intance classes, V1, is in the first column
+write.csv(model$SV, file="model_SV.csv")
+write.csv(prediction, file="predict_result.csv")
