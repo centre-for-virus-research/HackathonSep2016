@@ -11,6 +11,25 @@ function ($scope, $http) {
 	  $scope.svg = d3.select("svg");
 	  $scope.contigs = [];
 	  
+	  
+	  $scope.cX = function(d) {
+			var xMetricProperty = $scope.xMetric.property;
+	  		return 10+(d[xMetricProperty] * ($scope.svgWidth-20));
+	  	};
+	  $scope.cY = function(d) {
+			var yMetricProperty = $scope.yMetric.property;
+	  		return 10+((1.0-d[yMetricProperty]) * ($scope.svgHeight-20));
+	  	};
+
+	  $scope.selectContig = function(d) {
+	  		console.log("Selected contig ID:", d.contigId);
+	  		$scope.selectedContig = d;
+	  		$scope.selectedCircle
+		  	.attr("cx", $scope.cX(d))
+		  	.attr("cy", $scope.cY(d));
+	  		$scope.getContigDetails(d.contigId);
+	  };
+	  
 	  $scope.updateData = function() {
 		
 		d3.selectAll("svg > *").remove();
@@ -29,19 +48,8 @@ function ($scope, $http) {
 		.style("stroke", "black")
 		.style("fill", "white");
 		
-		var xMetricProperty = $scope.xMetric.property;
-		var yMetricProperty = $scope.yMetric.property;
-		
-		console.log("xMetricProperty: ", xMetricProperty);
-		console.log("yMetricProperty: ", yMetricProperty);
 		
 		var darkFill = function(d) {return d.isDark ? "#91e6e9" : "#e99491"};
-		var cX = function(d) {
-	  		return 10+(d[xMetricProperty] * ($scope.svgWidth-20));
-	  	};
-		var cY = function(d) {
-	  		return 10+((1.0-d[yMetricProperty]) * ($scope.svgHeight-20));
-	  	};
 		
 		var selection = 
 		  	$scope.svg
@@ -50,20 +58,14 @@ function ($scope, $http) {
 		
 	  	selection.enter()
 		  	.append("circle")
-		  	.attr("cx", cX)
-		  	.attr("cy", cY)
+		  	.attr("cx", $scope.cX)
+		  	.attr("cy", $scope.cY)
 		  	.attr("r", 5)
 		  	.style("fill", darkFill)
 		  	.style("stroke", "black")
 		  	.on("mouseover", function(){d3.select(this).style("fill", "black");})
 		  	.on("mouseout", function(){d3.select(this).style("fill", darkFill);})
-		  	.on("click", function(d){
-		  		console.log("Selected contig ID:", d.contigId);
-		  		$scope.getContigDetails(d.contigId);
-		  		$scope.selectedCircle
-			  	.attr("cx", cX(d))
-			  	.attr("cy", cY(d));
-		  	})
+		  	.on("click", $scope.selectContig)
         ;
 	  	
 	  	$scope.selectedCircle = d3.select("svg")
@@ -74,7 +76,11 @@ function ($scope, $http) {
 	  	.style("fill", "none")
 	  	.style("stroke", "black")
 	  	.style("stroke-width", "3")
-	  	
+
+	  	if($scope.selectedContig) {
+		  	$scope.selectContig($scope.selectedContig);
+	  	}
+
 	  }
 	  
 	  console.log("retrieving sequence metrics");
@@ -95,11 +101,15 @@ function ($scope, $http) {
 		$scope.$watch( 'currentSample', function(newObj, oldObj) {
 			$scope.currentSampleChanged();
 			$scope.contigs = [];
+			$scope.contigDetails = null;
+			$scope.selectedContig = null;
 			$scope.updateData();
 		}, false);
 
 		$scope.$watch( 'currentSequence', function(newObj, oldObj) {
 			$scope.contigs = [];
+			$scope.contigDetails = null;
+			$scope.selectedContig = null;
 			$scope.updateData();
 		}, false);
 
