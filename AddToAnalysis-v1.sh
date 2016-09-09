@@ -8,7 +8,6 @@
 # 7th Sep, 2016
 #
 
-ARGC=$#  # Number of args, not counting $0
 Usage () {
     echo "";
     echo "Usage: AddToAnalysis.sh table.txt";
@@ -16,11 +15,10 @@ Usage () {
 }
 
 # Check the command line options
-if [ $# -eq 2 ]; then Usage; exit 1; fi
+if [ $# -ne 1 ]; then Usage; exit 1; fi
 
 # Is the input file readble
 if [ ! -f $1 ]; then echo "File $1 not found"; Usage; exit 1; fi
-
 
 cp $1 ~/data-$$.txt
 
