@@ -123,3 +123,15 @@ The key contigs with their corresponding attributes values (e.g. GC content, ent
 (2)predict_result.csv :
 The prediction results with the contig ID and the corresponding predicted class of contigs (dark or light).
 
+**PCAplot.r** is an R script to retrieve the different statistics from the database and generate a principal component analysis plot of PC1 against PC2. 
+The plot generated is in html format and used plotly to provide interactivity of zooming in and out. To run the program, you need to provide
+ an output file name (with html extension), a size cut-off and the password to the database. As the database is getting larger, it is advisable to 
+ use a high-ish size cut-off.
+```
+Rscript PCAplot.r PCA3000.html 3000 *****
+```
+TODO:
+1. Provide a means of pltting wither dark, light or both
+2. Integrate Maha's php script for fetching the sequence
+
+
