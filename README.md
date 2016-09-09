@@ -100,11 +100,11 @@ AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
 ```
 
 
-**MLlearning.r**  is the R script to predict the class of the input contigs (e.g. dark or light)  based on machine learning (here support vector machine (SVM) algorithm is used).e.g.:
+**MLlearning.r**  is the R script to predict the class (i.e. dark or light) of the contigs from their complexity based on the machine learning. Here support vector machine (SVM) algorithm is used. e.g.:
 ```
 Rscript MLlearning.r
 ```
-The run this R script, we need two inputs files in the same directory.
+The run this R script, two datasets(Train set and Test set) should be copied in the same directory.
 
 (1) testdata.complex :
 The Output file of profileComplexSeq1.pl with the complexity (e.g. GC content, entropy, etc.) of contigs for testing.
@@ -115,7 +115,7 @@ The gold standard TXT file for training the prediction engine with the complexit
 The format is almost same with testdata.complex but just with an extra column containing the class of contigs (i.e. dark or light).
 The header of the file: "ContigID darklight gc gcs cpg cwf ce cz".
 
-There are two output files:
+There are two output files from this R script:
 
 (1)model_SV.csv :
 The key contigs with their corresponding attributes values (e.g. GC content, entropy, etc.) , which are support vectors for the machine learning and prediction.
