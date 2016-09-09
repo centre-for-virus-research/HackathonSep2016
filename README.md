@@ -100,7 +100,7 @@ AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
 ```
 
 
-**MLlearning.r**  is the R script to predict the class of the input contigs (e.g. dark or light)  based on machine learning (here SVM is used).
+**MLlearning.r**  is the R script to predict the class of the input contigs (e.g. dark or light)  based on machine learning (here support vector machine (SVM) algorithm is used).e.g.:
 ```
 Rscript MLlearning.r
 ```
@@ -117,9 +117,9 @@ The header of the file: "ContigID darklight gc gcs cpg cwf ce cz".
 
 There are two output files:
 
-(1)model_SV.csv
+(1)model_SV.csv :
 The key contigs with their corresponding attributes values (e.g. GC content, entropy, etc.) , which are support vectors for the machine learning and prediction.
 
-(2)predict_result.csv
+(2)predict_result.csv :
 The prediction results with the contig ID and the corresponding predicted class of contigs (dark or light).
 
