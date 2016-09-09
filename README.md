@@ -8,10 +8,10 @@ consolodiated using GARM.
 
 
 ## Scripts
-**contigs.php**: retrieves a contig, given its id, from the database and display it to the user
+**contigs.php**: a web-based script to retrieves a contig, given its id in the URL, from the database and display it in a fasta format
 e.g.:
 ```
-contigs.php contigID
+/URL/contigs.php?id=<contigID>
 ```
 
 **ContigStats.pl**: perl script to process a bam file, provides sttistics about number 
