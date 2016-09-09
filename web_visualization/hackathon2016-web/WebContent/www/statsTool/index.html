@@ -63,15 +63,15 @@
 					<table class="table table-striped table-bordered"
 						style="table-layout: fixed; word-wrap: break-word;">
 						<thead>
-							<col width="22%"></col>
-							<col width="78%"></col>
+							<col width="28%"></col>
+							<col width="72%"></col>
 						</thead>
-						<tr ng-repeat="(key, value) in contigDetails.properties">
-							<td><b>{{key}}</b></td>
-							<td ng-if="key.endsWith(' match')">
-								<a href="http://www.ncbi.nlm.nih.gov/nuccore/{{value}}" target="_blank">{{value}}</a>
+						<tr ng-repeat="prop in contigDetails.properties track by $index">
+							<td><b>{{prop.description}}</b></td>
+							<td ng-if="prop.link != null">
+								<a href="{{prop.link}}" target="_blank">{{prop.value}}</a>
 							</td>
-							<td ng-if="!key.endsWith(' match')">{{value}}</td>
+							<td ng-if="prop.link == null">{{prop.value}}</td>
 						</tr>
 					</table>
 			    </div>

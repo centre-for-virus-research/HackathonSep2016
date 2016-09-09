@@ -5,9 +5,12 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
@@ -23,11 +26,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.query.SelectQuery;
 
+
+import uk.ac.gla.cvr.hackathon2016.data.KnownDark;
 import uk.ac.gla.cvr.hackathon2016.data.MergeTable;
 import uk.ac.gla.cvr.hackathon2016.data.Sample;
 import uk.ac.gla.cvr.hackathon2016.data.Sequence;
@@ -231,11 +237,11 @@ public class Hackathon2016Controller {
 			MergeTable resultContig = mergeTableRecords.get(0);
 
 			JsonObjectBuilder contigObjBuilder = JsonUtils.jsonObjectBuilder();
-			contigObjBuilder.add("title", 
-					determineIfDark(resultContig) ? "Dark contig" : "Known contig");
+			boolean isDark = determineIfDark(resultContig);
+			contigObjBuilder.add("title", isDark ? "Dark contig" : "Known contig");
 			contigObjBuilder.add("contigId", resultContig.getContigID());
 			
-			contigObjBuilder.add("properties", createPropertiesJsonObj(resultContig, xMetric, yMetric));
+			contigObjBuilder.add("properties", createPropertiesJsonArray(resultContig, xMetric, yMetric, isDark, objectContext));
 			
 			JsonObject result = contigObjBuilder.build();
 
@@ -249,24 +255,79 @@ public class Hackathon2016Controller {
 		} 
 	}
 
-	private JsonObject createPropertiesJsonObj(MergeTable resultContig,
-			SequenceMetric xMetric, SequenceMetric yMetric) {
+	private JsonObject propertyDoubleObj(String description, Double value) {
 		JsonObjectBuilder propertiesObjBuilder = JsonUtils.jsonObjectBuilder();
+		propertiesObjBuilder.add("description", description);
+		propertiesObjBuilder.add("value", value);
+		return propertiesObjBuilder.build();
+	}
+
+	private JsonObject propertyLinkObj(String description, String value, String link) {
+		JsonObjectBuilder propertiesObjBuilder = JsonUtils.jsonObjectBuilder();
+		propertiesObjBuilder.add("description", description);
+		propertiesObjBuilder.add("value", value);
+		propertiesObjBuilder.add("link", link);
+		return propertiesObjBuilder.build();
+	}
+
+	private JsonObject propertyStringObj(String description, String value) {
+		JsonObjectBuilder propertiesObjBuilder = JsonUtils.jsonObjectBuilder();
+		propertiesObjBuilder.add("description", description);
+		propertiesObjBuilder.add("value", value);
+		return propertiesObjBuilder.build();
+	}
+
+	private JsonArray createPropertiesJsonArray(MergeTable resultContig,
+			SequenceMetric xMetric, SequenceMetric yMetric, boolean isDark, ObjectContext objectContext) {
+		JsonArrayBuilder propertiesArrayBuilder = JsonUtils.jsonArrayBuilder();
 		
 		for(SequenceMetric metric: new LinkedHashSet<SequenceMetric>(Arrays.asList(xMetric, yMetric, SequenceMetric.mappedReads, SequenceMetric.refLength))) {
 			Object propertyValObj = resultContig.readProperty(metric.getMergeTableProperty());
-			propertiesObjBuilder.add(metric.getDescription(), metric.mapToDouble(propertyValObj));
+			propertiesArrayBuilder.add(
+					propertyDoubleObj(metric.getDescription(), metric.mapToDouble(propertyValObj)));
+		}
+		if(isDark) {
+			Set<String> relatedDarkContigs = new LinkedHashSet<String>();
+
+			{
+				Expression exp = ExpressionFactory
+						.matchExp(KnownDark.QUERY_ID_PROPERTY, resultContig.getContigID());
+				SelectQuery query = new SelectQuery(KnownDark.class, exp);
+				@SuppressWarnings("unchecked")
+				List<KnownDark> knownDarkRecords = (List<KnownDark>) objectContext.performQuery(query);
+				knownDarkRecords.forEach(kdr -> relatedDarkContigs.add(kdr.getContigID()));
+			}
+
+			{
+				Expression exp = ExpressionFactory
+						.matchExp(KnownDark.CONTIG_ID_PROPERTY, resultContig.getContigID());
+				SelectQuery query = new SelectQuery(KnownDark.class, exp);
+				@SuppressWarnings("unchecked")
+				List<KnownDark> knownDarkRecords = (List<KnownDark>) objectContext.performQuery(query);
+				knownDarkRecords.forEach(kdr -> relatedDarkContigs.add(kdr.getQueryID()));
+			}
+			
+			relatedDarkContigs.forEach(rdc -> 
+				propertiesArrayBuilder.add(propertyStringObj("Related dark contig", rdc)));
+
 		}
 		Optional.ofNullable(resultContig.getAdaptorSubjectId())
-		.ifPresent(s -> propertiesObjBuilder.add("Adapter sequence match", idToAccession(s)));
+		.ifPresent(s -> {
+			String accession = idToAccession(s);
+			propertiesArrayBuilder.add(propertyLinkObj("Adapter sequence match", accession, "http://www.ncbi.nlm.nih.gov/nuccore/"+accession));
+		});
 		Optional.ofNullable(resultContig.getBlastSubjectId())
-		.ifPresent(s -> propertiesObjBuilder.add("Nucleotide match", idToAccession(s)));
+		.ifPresent(s -> {
+			String accession = idToAccession(s);
+			propertiesArrayBuilder.add(propertyLinkObj("Nucleotide sequence match", accession, "http://www.ncbi.nlm.nih.gov/nuccore/"+accession));
+		});
 		Optional.ofNullable(resultContig.getDiamondSubjectId())
-		.ifPresent(s -> propertiesObjBuilder.add("Protein match", idToAccession(s)));
-		propertiesObjBuilder.add("Sequence", resultContig.getSeq());
-
-		JsonObject build = propertiesObjBuilder.build();
-		return build;
+		.ifPresent(s -> {
+			String accession = idToAccession(s);
+			propertiesArrayBuilder.add(propertyLinkObj("Protein sequence match", accession, "http://www.ncbi.nlm.nih.gov/protein/"+accession));
+		});
+		propertiesArrayBuilder.add(propertyStringObj("Sequence", resultContig.getSeq()));
+		return propertiesArrayBuilder.build();
 	}
 
 	private String idToAccession(String s) {
