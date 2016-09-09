@@ -2,7 +2,7 @@
 dataset1 <- read.table('traindata.txt', head = T)
 dataset<-dataset1[,-1]
 rownames(dataset)<-dataset1[,1]
-dataset2 <- read.table('testdata.txt', head = T)
+dataset2 <- read.table('testdata.complex', head = T)
 testset<-dataset2[,-1]
 rownames(testset)<-dataset2[,1]
 library(e1071)
