@@ -1,4 +1,48 @@
 apply plugin: 'war'
+apply plugin: 'org.hidetake.ssh'
+
+remotes {
+  hackathon2016_aws {
+    host = '52.211.101.130'
+    user = 'ubuntu'
+    identity = file('/Users/joshsinger/.ssh/hackathon2016_aws.pem')
+  }
+}
+
+buildscript {
+  repositories {
+    // for ssh-deploy stuff
+    jcenter()
+  }
+  dependencies {
+    classpath group: 'org.hidetake', name: 'gradle-ssh-plugin', version: '1.1.3'
+  }
+}
+
+task deployUiWarHackWebAWS(dependsOn: ['war']) {
+  ext.HackWsUiWarFile = new File(buildDir, '/libs/hackathon2016-web.war')
+  ext.HackWsUiWarTouchfile = new File(buildDir, '/deployUiWarHackWebAWS.touchfile')
+  inputs.file HackWsUiWarFile
+  outputs.file HackWsUiWarTouchfile
+  doLast {
+	  println "Uploading "+HackWsUiWarFile.name
+	  ssh.run {
+	    session(remotes.hackathon2016_aws) {
+	      put from: HackWsUiWarFile.absolutePath, into: '/tmp/hackathon2016-web.war'
+	      execute 'sudo service tomcat7 stop'
+	      execute 'sudo rm -rf /var/lib/tomcat7/webapps/hackathon2016-web'
+	      execute 'sudo rm -rf /var/lib/tomcat7/webapps/hackathon2016-web.war'
+	      execute 'sudo mv /tmp/hackathon2016-web.war /var/lib/tomcat7/webapps'
+	      execute 'sudo service tomcat7 start'
+	    }
+	  }
+	  HackWsUiWarTouchfile.delete()
+	  buildDir.mkdirs()
+	  HackWsUiWarTouchfile.createNewFile()
+  }
+}
+
+
 
 
 

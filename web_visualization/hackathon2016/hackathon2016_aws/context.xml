@@ -31,8 +31,9 @@
     -->
 
 	<!-- glue config file -->    
-    <Environment name="configFilePath" type="java.lang.String" value="/opt/gluetools/conf/gluetools-config.xml"/>
-    <Environment name="migrateSchema" type="java.lang.Boolean" value="false"/>
+    <Environment name="hackathon2016.jdbcUrl" type="java.lang.String" value="jdbc:mysql://localhost:3306/HACK?zeroDateTimeBehavior=convertToNull&amp;autoReconnect=true&amp;charac‌​terEncoding=UTF-8&amp;ch‌​aracterSetResults=UT‌​F-8"/>
+    <Environment name="hackathon2016.username" type="java.lang.String" value="hack"/>
+    <Environment name="hackathon2016.password" type="java.lang.String" value="hack"/>
     
 
 </Context>

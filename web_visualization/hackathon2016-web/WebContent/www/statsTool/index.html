@@ -25,7 +25,27 @@
 <div class="container" ng-app="statsToolApp">
 
 	<div ng-controller="statsToolCtrl">
-		<h2>CVR Bioinformatics Hackathon 2016: Dark Contigs</h2>
+	
+	
+			<h2>Metagenomic Dark Contigs</h2>
+		<div class="row">
+			<div class="col-md-8"
+				<p>
+				When a metagenomics sample is sequenced and data is assembled, large numbers of contigs are generated. 
+				Some of these are <b>known contigs</b> which match sequences already characterised in nucleotide or protein databases.
+				Others are <b>dark contigs</b>: sequence fragments which are not homologous to any known sequence but have 
+				simple characteristics indicating they may be of biological origin. It is even possible that some dark contigs may be 
+				homologous across different metagenomic samples. Further investigation of these dark contigs may reveal new sequencing results.
+				</p>
+				<p>
+				This simple online tool allows the exploration of a database containing both known and dark contigs from several metagenomics samples.
+				</p>
+			</div>
+			<div class="col-md-4"
+				<p><img alt="MRC-University of Glasgow Centre for Virus Research" src="images/CVRLogo.png"></p>
+				<p><a href="http://www.gla.ac.uk/researchinstitutes/iii/cvr/" target="_blank"><small>MRC-University of Glasgow Centre for Virus Research</small></a></p>
+			</div>
+		</div>
 		<p>
 		Sample:
 		<select ng-model="currentSample"

@@ -8,23 +8,25 @@ import org.apache.cayenne.di.Module;
 public class Hackathon2016Database {
 
 	private static Hackathon2016Database instance;
+	private static String jdbcUrl, username, password;
 
 	private ServerRuntime serverRuntime;
 	
-	private Hackathon2016Database() {
-		this.serverRuntime = initLocal();
+	private Hackathon2016Database(String jdbcUrl, String username, String password) {
+		this.serverRuntime = initLocal(jdbcUrl, username, password);
 	}
 	
 	public static Hackathon2016Database getInstance() {
 		if(instance == null) {
-			instance = new Hackathon2016Database();
+			instance = new Hackathon2016Database(jdbcUrl, username, password);
 		}
 		return instance;
 	}
 
 	@SuppressWarnings("unused")
-	private ServerRuntime initLocal() {
-		return new ServerRuntime("cayenne-hackathon2016-local.xml");		
+	private ServerRuntime initLocal(String jdbcUrl, String username, String password) {
+		return new ServerRuntime("cayenne-hackathon2016-local.xml", 
+				createCayenneDbConfigModule("20000", "com.mysql.jdbc.Driver", jdbcUrl, username, password));		
 	}
 
 	public ServerRuntime getServerRuntime() {
@@ -53,4 +55,19 @@ public class Hackathon2016Database {
 		};
 		return dbConfigModule;
 	}
+
+	public static void setJdbcUrl(String jdbcUrl) {
+		Hackathon2016Database.jdbcUrl = jdbcUrl;
+	}
+
+	public static void setUsername(String username) {
+		Hackathon2016Database.username = username;
+	}
+
+	public static void setPassword(String password) {
+		Hackathon2016Database.password = password;
+	}
+	
+	
+	
 }

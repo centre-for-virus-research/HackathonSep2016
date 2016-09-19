@@ -6,12 +6,16 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.ws.rs.ApplicationPath;
 
 import org.glassfish.jersey.server.ResourceConfig;
+
 
 import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 
@@ -32,6 +36,22 @@ public class Hackathon2016Application extends ResourceConfig implements ServletC
 	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
+		String jdbcUrl;
+		String username;
+		String password;
+		try {
+			Context ctx = new InitialContext();
+			jdbcUrl = (String) ctx.lookup("java:comp/env/hackathon2016.jdbcUrl");
+	        username = (String) ctx.lookup("java:comp/env/hackathon2016.username");
+	        password = (String) ctx.lookup("java:comp/env/hackathon2016.password");
+		} catch (NamingException e) {
+			throw new RuntimeException("JNDI error. Please ensure the correct webapp config file exists in $CATALINA_BASE/conf/[enginename]/[hostname]/ or elsewhere", e);
+		}
+		Hackathon2016Database.setJdbcUrl(jdbcUrl);
+		Hackathon2016Database.setUsername(username);
+		Hackathon2016Database.setPassword(password);
+		
+		
 	}
 
 	@Override
