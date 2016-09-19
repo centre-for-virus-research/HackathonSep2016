@@ -8,10 +8,10 @@ consolodiated using GARM.
 
 
 ## Scripts
-**contigs.php**: retrieves a contig, given its id, from the database and display it to the user
+**contigs.php**: a web-based script to retrieves a contig, given its id in the URL, from the database and display it in a fasta format
 e.g.:
 ```
-contigs.php contigID
+/URL/contigs.php?id=<contigID>
 ```
 
 **ContigStats.pl**: perl script to process a bam file, provides sttistics about number 
@@ -40,13 +40,12 @@ e.g.:
 perl JoinTables.pl -adaptor checks_adapters_out -diamond checks_diamond.m8 -blast checks_blastn.m8 -entropy contigs.complex -mapped mapping.txt -out output.txt
 ```
 
-**profileComplexSeq1.pl**
+**profileComplexSeq1.pl** perl script to calculate the complexity of the contigs
 e.g.:
 ```
 perl profileComplexSeq1.pl <filename.fa>
 ```
-The output is filename.complex where columns are tab delimited in the order of;
-
+The output is filename.complex where columns are tab delimited in the order of:
  
 seq is the header of the contigs/sequence;
 
@@ -74,6 +73,9 @@ java -jar RandomVirus.jar InputSequenFileName[string] NumberOfReads[int] ReadLen
 
 ```
 **extarctDarkContigs.sh** and **DarkContigs.sql** Bash and SQL script to extract current dark sequences from the database and re-run classification using latest version of the nt and nr DB using BLASTN and DIAMOND respectively.
+TODO: 
+1. This script needs to be updated to update the records in MySQL if the sequences are re-classified.
+2. Add this script to cronjob to re-run the classification when newer versions of the DBs are available on the server.
 ```
 extarctDarkContigs.sh ContigFileName Outprefix
 ```
@@ -99,3 +101,58 @@ To add to MergeContigs and KnownDark tables
 ```
 AddToMergeTable-v1.sh midge1_join.txt midge1-0167e2
 ```
+
+
+**PredictClassContig.sh**  is the bash script is to predict the class (i.e. dark or light) of the contigs from their complexity (e.g. GC content, entropy, etc.) based on the machine learning. Here support vector machine (SVM) algorithm. The training set is randomly selected 70,000 contigs with their complexity, the test set is randomly selected 30,000 contigs with their complexity.  usage:
+```
+PredictClassContig ContigFile.fa
+```
+The input file is the contigs to be predicted with FASTA format.
+
+There are five output files from this script:
+
+(1)model_SV.csv : The key contigs in training set with their corresponding attributes values (e.g. GC content, entropy, etc.) , which are support vectors for the machine learning and prediction;
+
+(2)predict_result.csv : The prediction results with the contig ID to be predicted and the corresponding predicted class of contigs (dark or light);
+
+(3)FeatureCorrleation.jpg: The correlation plot among the attributes from the training dataset;
+
+(4)SVMclassification.jpg: The 2-D plots to show the SVM classification on the training set;
+
+(5) predict_accuracy.csv: The prediction accuracy  of test set based on the training set.
+
+
+
+
+**PCAplot.r** is an R script to retrieve the different statistics from the database and generate a principal component analysis plot of PC1 against PC2. 
+The plot generated is in html format and used plotly to provide interactivity of zooming in and out. To run the program, you need to provide
+ an output file name (with html extension), a size cut-off and the password to the database. As the database is getting larger, it is advisable to 
+ use a high-ish size cut-off.
+```
+Rscript PCAplot.r PCA3000.html 3000 *****
+```
+TODO:
+
+1. Provide a means of pltting wither dark, light or both
+
+2. Integrate Maha's php script for fetching the sequence
+
+3. Add option to query a specific sample
+
+
+**MDSplot.r** is an R script to retrieve the different statistis and produce and MDS plot 
+of the dark contigs. It is run in a similar wayas PCAplot.r
+```
+Rscript MDSplot.r MDS3000.html 3000 *****
+```
+TODO:
+
+1. Improve the clicking for fetching the sequence
+
+**clustering.sh** is  bash script to carry out the cluster analysis for dark contigs using cd-hit.
+```
+clustering.sh DarkContigFile.fa IdentityThreshold(e.g. 0.9) Outprefix
+```
+
+
+

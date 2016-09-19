@@ -1,4 +1,4 @@
-package SeqComplex_QG;
+package SeqComplex1;
 
 =head1 NAME
 
